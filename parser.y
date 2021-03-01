@@ -1,5 +1,6 @@
 %{
         #include <math.h>
+		#include <string.h>
 
 		#define MAX(a,b) ((a) > (b) ? (a) : (b))
 %}
@@ -24,6 +25,8 @@
 	void Sub_Polynomials(_polynomial* result, _polynomial first_p, _polynomial sec_p);
 	void Mul_Polynomials(_polynomial* result, _polynomial first_p, _polynomial sec_p);
 	void Div_Polynomials(_polynomial* result, _polynomial first_p, _polynomial sec_p);
+
+	void Pow_Polynomial_Num(_polynomial* result, _polynomial polynomial, int degree);
 
 	void Neg_Polynomial(_polynomial* result, _polynomial polynomial);
 
@@ -69,6 +72,7 @@ polynom:
 		|		polynom '-' polynom     { printf("\nIn pol - pol\n"); Init_Polynomial(&$$); Sub_Polynomials(&$$, $1, $3);}
 		|		polynom '*' polynom     { printf("\nIn pol * pol\n"); Init_Polynomial(&$$); Mul_Polynomials(&$$, $1, $3);}
 		| 	'-' polynom	%prec NEG		{ printf("\nIn neg pol\n");   Neg_Polynomial(&$$, $2);}
+		|		polynom '^' digit	    { printf("\nIn pol ^ digit\n"); Init_Polynomial(&$$); Pow_Polynomial_Num(&$$, $1, $3);}
 		|		monom 					{ printf("\nIn polynom - monom\n"); $$ = $1;}
 
 ;
@@ -92,6 +96,32 @@ digit	:
 %%
 
 
+void Pow_Polynomial_Num(_polynomial* result, _polynomial polynomial, int degree)
+{
+	if (degree == 0 && polynomial.degree == 0)
+		Error_Msg("0^0 is incorrect");
+	else if (degree == 0)
+	{
+		result->coeff_array[0] = 1;
+		return;
+	}
+
+	//printf("\npoly degree: %d   mul degree: %d\n", polynomial.degree, degree);
+
+	_polynomial orig_poly;
+	memcpy(&orig_poly, &polynomial, sizeof(_polynomial));
+
+	for (int i = 1; i < degree; i++)
+	{
+		Init_Polynomial(result);
+		Mul_Polynomials(result, orig_poly, polynomial);
+		memcpy(&orig_poly, result, sizeof(_polynomial));
+
+		//printf("\nin iteration res:\n");
+		//Print_Polynom(result);
+	}
+}
+
 
 void Mul_Polynomials(_polynomial* result, _polynomial first_p, _polynomial sec_p)
 {
@@ -114,7 +144,7 @@ void Mul_Polynomials(_polynomial* result, _polynomial first_p, _polynomial sec_p
 			}
 			else
 			{
-				printf("\nMaximum degree reached\n");
+				Error_Msg("\nMaximum degree reached\n");
 				break;
 			}
 		}

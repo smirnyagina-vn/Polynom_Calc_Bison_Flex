@@ -35,7 +35,7 @@
 /* "%code requires" blocks.  */
 
 /* Line 1676 of yacc.c  */
-#line 8 "parser.y"
+#line 9 "parser.y"
 
 
 	#define MAX_ELEMENTS 1000
@@ -56,6 +56,8 @@
 	void Mul_Polynomials(_polynomial* result, _polynomial first_p, _polynomial sec_p);
 	void Div_Polynomials(_polynomial* result, _polynomial first_p, _polynomial sec_p);
 
+	void Pow_Polynomial_Num(_polynomial* result, _polynomial polynomial, int degree);
+
 	void Neg_Polynomial(_polynomial* result, _polynomial polynomial);
 
 	void Error_Msg(const char *s);
@@ -63,7 +65,7 @@
 
 
 /* Line 1676 of yacc.c  */
-#line 67 "y.tab.h"
+#line 69 "y.tab.h"
 
 /* Tokens.  */
 #ifndef YYTOKENTYPE
@@ -89,7 +91,7 @@ typedef union YYSTYPE
 {
 
 /* Line 1676 of yacc.c  */
-#line 33 "parser.y"
+#line 36 "parser.y"
 
 
 	_polynomial 	p;
@@ -99,7 +101,7 @@ typedef union YYSTYPE
 
 
 /* Line 1676 of yacc.c  */
-#line 103 "y.tab.h"
+#line 105 "y.tab.h"
 } YYSTYPE;
 # define YYSTYPE_IS_TRIVIAL 1
 # define yystype YYSTYPE /* obsolescent; will be withdrawn */
