@@ -58,19 +58,22 @@
 		int 	        count;	
 	};
 
-	void	Report_Bug(const char*, const char*);
 
-	struct _monomial	Create_Monomial(int coefficient, char letter, int power);
+	struct _monomial Create_Monomial(int coefficient, char letter, int power);
 
 	void Init_Polynomial(struct _polynomial* polynomial);
 	void Add_Monomial(struct _polynomial* polynomial, struct _monomial monomial);
 
-	void Print_Polynomial(struct _polynomial* polynomial);
+        struct _polynomial Add_Polynomials(struct _polynomial polynomial_one, struct _polynomial polynomial_two);
+        struct _node* Remove_Node(struct _polynomial* polynomial, struct _node* node);
+        struct _polynomial Remove_Similar_Summands(struct _polynomial polynomial);
+	
+        void Print_Polynomial(struct _polynomial* polynomial);
 
 
 
 /* Line 1676 of yacc.c  */
-#line 74 "y.tab.h"
+#line 77 "y.tab.h"
 
 /* Tokens.  */
 #ifndef YYTOKENTYPE
@@ -96,7 +99,7 @@ typedef union YYSTYPE
 {
 
 /* Line 1676 of yacc.c  */
-#line 38 "parser.y"
+#line 41 "parser.y"
 
 
 	struct _polynomial 	p;
@@ -107,7 +110,7 @@ typedef union YYSTYPE
 
 
 /* Line 1676 of yacc.c  */
-#line 111 "y.tab.h"
+#line 114 "y.tab.h"
 } YYSTYPE;
 # define YYSTYPE_IS_TRIVIAL 1
 # define yystype YYSTYPE /* obsolescent; will be withdrawn */

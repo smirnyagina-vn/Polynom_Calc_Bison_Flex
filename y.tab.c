@@ -120,19 +120,22 @@
 		int 	        count;	
 	};
 
-	void	Report_Bug(const char*, const char*);
 
-	struct _monomial	Create_Monomial(int coefficient, char letter, int power);
+	struct _monomial Create_Monomial(int coefficient, char letter, int power);
 
 	void Init_Polynomial(struct _polynomial* polynomial);
 	void Add_Monomial(struct _polynomial* polynomial, struct _monomial monomial);
 
-	void Print_Polynomial(struct _polynomial* polynomial);
+        struct _polynomial Add_Polynomials(struct _polynomial polynomial_one, struct _polynomial polynomial_two);
+        struct _node* Remove_Node(struct _polynomial* polynomial, struct _node* node);
+        struct _polynomial Remove_Similar_Summands(struct _polynomial polynomial);
+	
+        void Print_Polynomial(struct _polynomial* polynomial);
 
 
 
 /* Line 209 of yacc.c  */
-#line 136 "y.tab.c"
+#line 139 "y.tab.c"
 
 /* Tokens.  */
 #ifndef YYTOKENTYPE
@@ -158,7 +161,7 @@ typedef union YYSTYPE
 {
 
 /* Line 214 of yacc.c  */
-#line 38 "parser.y"
+#line 41 "parser.y"
 
 
 	struct _polynomial 	p;
@@ -169,7 +172,7 @@ typedef union YYSTYPE
 
 
 /* Line 214 of yacc.c  */
-#line 173 "y.tab.c"
+#line 176 "y.tab.c"
 } YYSTYPE;
 # define YYSTYPE_IS_TRIVIAL 1
 # define yystype YYSTYPE /* obsolescent; will be withdrawn */
@@ -181,7 +184,7 @@ typedef union YYSTYPE
 
 
 /* Line 264 of yacc.c  */
-#line 185 "y.tab.c"
+#line 188 "y.tab.c"
 
 #ifdef short
 # undef short
@@ -403,7 +406,7 @@ union yyalloc
 /* YYNNTS -- Number of nonterminals.  */
 #define YYNNTS  5
 /* YYNRULES -- Number of rules.  */
-#define YYNRULES  12
+#define YYNRULES  13
 /* YYNRULES -- Number of states.  */
 #define YYNSTATES  19
 
@@ -452,7 +455,7 @@ static const yytype_uint8 yytranslate[] =
 static const yytype_uint8 yyprhs[] =
 {
        0,     0,     3,     4,     7,     9,    12,    15,    19,    21,
-      26,    30,    32
+      26,    29,    33,    35
 };
 
 /* YYRHS -- A `-1'-separated list of the rules' RHS.  */
@@ -460,15 +463,15 @@ static const yytype_int8 yyrhs[] =
 {
       13,     0,    -1,    -1,    13,    14,    -1,    11,    -1,    15,
       11,    -1,     1,    11,    -1,    15,     6,    15,    -1,    16,
-      -1,     4,     3,    10,     4,    -1,     3,    10,     4,    -1,
-       3,    -1,     4,    -1
+      -1,     4,     3,    10,     4,    -1,     4,     3,    -1,     3,
+      10,     4,    -1,     3,    -1,     4,    -1
 };
 
 /* YYRLINE[YYN] -- source line where rule number YYN was defined.  */
 static const yytype_uint8 yyrline[] =
 {
-       0,    60,    60,    61,    64,    65,    66,    71,    72,    77,
-      78,    79,    80
+       0,    63,    63,    64,    67,    68,    69,    74,    75,    80,
+      81,    82,    83,    84
 };
 #endif
 
@@ -497,14 +500,14 @@ static const yytype_uint16 yytoknum[] =
 static const yytype_uint8 yyr1[] =
 {
        0,    12,    13,    13,    14,    14,    14,    15,    15,    16,
-      16,    16,    16
+      16,    16,    16,    16
 };
 
 /* YYR2[YYN] -- Number of symbols composing right hand side of rule YYN.  */
 static const yytype_uint8 yyr2[] =
 {
        0,     2,     0,     2,     1,     2,     2,     3,     1,     4,
-       3,     1,     1
+       2,     3,     1,     1
 };
 
 /* YYDEFACT[STATE-NAME] -- Default rule to reduce with in state
@@ -512,8 +515,8 @@ static const yytype_uint8 yyr2[] =
    means the default is an error.  */
 static const yytype_uint8 yydefact[] =
 {
-       2,     0,     1,     0,    11,    12,     4,     3,     0,     8,
-       6,     0,     0,     0,     5,    10,     0,     7,     9
+       2,     0,     1,     0,    12,    13,     4,     3,     0,     8,
+       6,     0,    10,     0,     5,    11,     0,     7,     9
 };
 
 /* YYDEFGOTO[NTERM-NUM].  */
@@ -1373,70 +1376,77 @@ yyreduce:
         case 4:
 
 /* Line 1455 of yacc.c  */
-#line 64 "parser.y"
+#line 67 "parser.y"
     { printf("Enter your polynom: \n");}
     break;
 
   case 5:
 
 /* Line 1455 of yacc.c  */
-#line 65 "parser.y"
+#line 68 "parser.y"
     { printf ("\nResult: "); Print_Polynomial(&(yyvsp[(1) - (2)].p)); }
     break;
 
   case 6:
 
 /* Line 1455 of yacc.c  */
-#line 66 "parser.y"
+#line 69 "parser.y"
     { yyerrok; }
     break;
 
   case 7:
 
 /* Line 1455 of yacc.c  */
-#line 71 "parser.y"
-    {printf("\nIn pol + pol\n");}
+#line 74 "parser.y"
+    {printf("\nIn pol + pol\n"); (yyval.p) = Add_Polynomials((yyvsp[(1) - (3)].p), (yyvsp[(3) - (3)].p));}
     break;
 
   case 8:
 
 /* Line 1455 of yacc.c  */
-#line 72 "parser.y"
+#line 75 "parser.y"
     {printf("\nIn pynom - monom\n"); Init_Polynomial(&(yyval.p)); Add_Monomial(&(yyval.p), (yyvsp[(1) - (1)].m));}
     break;
 
   case 9:
 
 /* Line 1455 of yacc.c  */
-#line 77 "parser.y"
+#line 80 "parser.y"
     { printf("\nIn NUM LETTER^NUM\n"); (yyval.m) = Create_Monomial((yyvsp[(1) - (4)].num), (yyvsp[(2) - (4)].letter), (yyvsp[(4) - (4)].num));}
     break;
 
   case 10:
 
 /* Line 1455 of yacc.c  */
-#line 78 "parser.y"
-    { printf("\nIn LETTER^NUM\n");     (yyval.m) = Create_Monomial(1, (yyvsp[(1) - (3)].letter), (yyvsp[(3) - (3)].num)); }
+#line 81 "parser.y"
+    { printf("\nIn NUM LETTER\n");     (yyval.m) = Create_Monomial((yyvsp[(1) - (2)].num), (yyvsp[(2) - (2)].letter), 1); }
     break;
 
   case 11:
 
 /* Line 1455 of yacc.c  */
-#line 79 "parser.y"
-    { printf("\nIn LETTER\n");         (yyval.m) = Create_Monomial(1, (yyvsp[(1) - (1)].letter), 1);  }
+#line 82 "parser.y"
+    { printf("\nIn LETTER^NUM\n");     (yyval.m) = Create_Monomial(1, (yyvsp[(1) - (3)].letter), (yyvsp[(3) - (3)].num)); }
     break;
 
   case 12:
 
 /* Line 1455 of yacc.c  */
-#line 80 "parser.y"
+#line 83 "parser.y"
+    { printf("\nIn LETTER\n");         (yyval.m) = Create_Monomial(1, (yyvsp[(1) - (1)].letter), 1);  }
+    break;
+
+  case 13:
+
+/* Line 1455 of yacc.c  */
+#line 84 "parser.y"
     { printf("\nIn NUM\n");            (yyval.m) = Create_Monomial((yyvsp[(1) - (1)].num), 'x', 0);}
     break;
 
 
 
 /* Line 1455 of yacc.c  */
-#line 1440 "y.tab.c"
+#line 1450 "y.tab.c"
       default: break;
     }
   YY_SYMBOL_PRINT ("-> $$ =", yyr1[yyn], &yyval, &yyloc);
@@ -1648,7 +1658,7 @@ yyreturn:
 
 
 /* Line 1675 of yacc.c  */
-#line 82 "parser.y"
+#line 86 "parser.y"
 
 
 
@@ -1709,6 +1719,101 @@ void Add_Monomial(struct _polynomial* polynomial, struct _monomial monomial)
 
 	polynomial->count++;
 }
+
+
+struct _node* Remove_Node(struct _polynomial* polynomial, struct _node* node)
+{
+	struct _node* result = node;
+
+	if (polynomial->begin == node)
+	{
+		if (node->next == NULL)
+		{
+			free(node);
+			// error!!!
+			return NULL;
+		}
+
+		node->next->prev = NULL;
+
+		result = node->next;
+		free(node);
+
+		polynomial->begin = result;
+		return result;
+	}
+
+	if (node->next == NULL)
+	{
+		node->prev->next = NULL;
+		result = node->prev;
+
+		free(node);
+		return result;
+	}
+
+	node->next->prev = node->prev;
+	node->prev->next = node->next;
+	result = node->prev;
+	free(node);
+	return result;
+}
+
+struct _polynomial Remove_Similar_Summands(struct _polynomial polynomial)
+{
+	struct _polynomial result;
+	Init_Polynomial(&result);
+	struct _monomial tmp_monom;
+	struct _node* tmp1 = polynomial.begin,
+		* tmp2;
+
+	while (tmp1 != NULL)
+	{
+		tmp_monom = tmp1->item;
+
+		tmp2 = polynomial.begin;
+
+		while (tmp2 != NULL)
+		{
+			if (
+
+				!strcmp(tmp1->item.variable, tmp2->item.variable) &&
+				tmp1->item.power == tmp2->item.power &&
+
+				tmp1 != tmp2)
+			{
+				tmp_monom.coefficient += tmp2->item.coefficient;
+				tmp2 = Remove_Node(&polynomial, tmp2);
+			}
+
+			tmp2 = tmp2->next;
+		}
+
+		tmp1 = Remove_Node(&polynomial, tmp1);
+		//tmp1 = tmp1->next;
+
+		Add_Monomial(&result, tmp_monom);
+	}
+
+	return result;
+}
+
+
+struct _polynomial Add_Polynomials(struct _polynomial polynomial_one, struct _polynomial polynomial_two)
+{
+	struct _polynomial result = polynomial_one;
+	struct _node* tmp = polynomial_two.begin;
+
+	Add_Monomial(&result, tmp->item);
+	while (tmp->next != NULL)
+	{
+		tmp = tmp->next;
+		Add_Monomial(&result, tmp->item);
+	}
+
+	return result;// = Remove_Similar_Summands(result);
+}
+
 
 
 void Print_Polynomial(struct _polynomial* polynomial)
