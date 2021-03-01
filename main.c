@@ -3,6 +3,7 @@
 
 int main (void)
 {
+  printf("Enter your polynom: \n");
   return yyparse ();
 }
 

@@ -38,8 +38,9 @@
 %union {
 
 	struct _polynomial 	p;
-	int 		num;
-	char 		letter;
+        struct _monomial        m;
+	int 		        num;
+	char 		        letter;
 }
 
 
@@ -52,6 +53,7 @@
 
 
 %type<p> polynom
+%type<m> monom
 
 
 %%
@@ -59,17 +61,23 @@ input:
         | input line
 ;
 
-line:     '\n'
-        | polynom '\n'   { printf ("\nline - polynom\n"); Print_Polynomial(&$1); }
-        | error '\n'     { yyerrok;                  }
+line:     '\n'           { printf("Enter your polynom: \n");}
+        | polynom '\n'   { printf ("\nResult: "); Print_Polynomial(&$1); }
+        | error '\n'     { yyerrok; }
 ;
 
-polynom:  
+polynom:
 
-          NUM LETTER '^' NUM  { printf("\nIn LETTER^NUM\n"); Init_Polynomial(&$$); Add_Monomial(&$$, Create_Monomial($1, $2, $4));}
-        | LETTER '^' NUM  { printf("\nIn LETTER^NUM\n"); Init_Polynomial(&$$); Add_Monomial(&$$, Create_Monomial(1, $1, $3));}
-        | NUM             { printf("\nIn NUM\n"); Init_Polynomial(&$$); Add_Monomial(&$$, Create_Monomial($1, 'x', 0)); }
-        | LETTER          { printf("\nIn LETTER\n"); Init_Polynomial(&$$); Add_Monomial(&$$, Create_Monomial(1, $1, 1));}        
+          polynom '+' polynom     {printf("\nIn pol + pol\n");}
+        | monom                   {printf("\nIn pynom - monom\n"); Init_Polynomial(&$$); Add_Monomial(&$$, $1);}
+;
+
+monom:  
+
+          NUM LETTER '^' NUM    { printf("\nIn NUM LETTER^NUM\n"); $$ = Create_Monomial($1, $2, $4);}
+        | LETTER '^' NUM        { printf("\nIn LETTER^NUM\n");     $$ = Create_Monomial(1, $1, $3); }
+        | LETTER                { printf("\nIn LETTER\n");         $$ = Create_Monomial(1, $1, 1);  }
+        | NUM                   { printf("\nIn NUM\n");            $$ = Create_Monomial($1, 'x', 0);}             
 ;
 %%
 
@@ -105,6 +113,8 @@ void Init_Polynomial(struct _polynomial* polynomial)
 
 void Add_Monomial(struct _polynomial* polynomial, struct _monomial monomial)
 {
+        printf("\n current monom: %d%c^%d\n", monomial.coefficient, monomial.variable, monomial.power);
+
 	struct _node* tmp;
 
 	tmp = polynomial->begin;
@@ -133,7 +143,7 @@ void Add_Monomial(struct _polynomial* polynomial, struct _monomial monomial)
 
 void Print_Polynomial(struct _polynomial* polynomial)
 {
-        printf("\n");
+        //printf("\n");
         struct _node* tmp = polynomial->begin;
 
 	for (int i = 0; i < polynomial->count; i++)

@@ -100,13 +100,14 @@ typedef union YYSTYPE
 
 
 	struct _polynomial 	p;
-	int 		num;
-	char 		letter;
+        struct _monomial        m;
+	int 		        num;
+	char 		        letter;
 
 
 
 /* Line 1676 of yacc.c  */
-#line 110 "y.tab.h"
+#line 111 "y.tab.h"
 } YYSTYPE;
 # define YYSTYPE_IS_TRIVIAL 1
 # define yystype YYSTYPE /* obsolescent; will be withdrawn */
