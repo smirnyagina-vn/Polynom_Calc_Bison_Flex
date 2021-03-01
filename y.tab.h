@@ -35,7 +35,7 @@
 /* "%code requires" blocks.  */
 
 /* Line 1676 of yacc.c  */
-#line 6 "parser.y"
+#line 8 "parser.y"
 
 
 	#define MAX_ELEMENTS 1000
@@ -89,7 +89,7 @@ typedef union YYSTYPE
 {
 
 /* Line 1676 of yacc.c  */
-#line 31 "parser.y"
+#line 33 "parser.y"
 
 
 	_polynomial 	p;
