@@ -5,45 +5,33 @@
 
 %code requires {
 
-	struct _monomial
+	#define MAX_ELEMENTS 1000
+
+	typedef struct _polynomial
 	{
-		int 	coefficient;	
-		char    variable;	
-		int 	power;		
-	};
-
-        struct _node
-	{
-		struct _monomial 	item;
-		struct _node*           next;	
-		struct _node*           prev;
-	};
-
-	struct _polynomial
-	{
-		struct _node*   begin;
-		int 	        count;	
-	};
+		int coeff_array[MAX_ELEMENTS];
+	}_polynomial;
 
 
-	struct _monomial Create_Monomial(int coefficient, char letter, int power);
+	void Init_Polynomial(_polynomial* polynomial);
+	void Add_Monomial(_polynomial* polynomial, int coefficient, int degree);
+	void Print_Polynom(_polynomial* polynomial);
 
-	void Init_Polynomial(struct _polynomial* polynomial);
-	void Add_Monomial(struct _polynomial* polynomial, struct _monomial monomial);
+	void Add_Polynomials(_polynomial* result, _polynomial first_p, _polynomial sec_p);
+	void Sub_Polynomials(_polynomial* result, _polynomial first_p, _polynomial sec_p);
+	void Mul_Polynomials(_polynomial* result, _polynomial first_p, _polynomial sec_p);
+	void Div_Polynomials(_polynomial* result, _polynomial first_p, _polynomial sec_p);
 
-        struct _polynomial Add_Polynomials(struct _polynomial polynomial_one, struct _polynomial polynomial_two);
-        struct _node* Remove_Node(struct _polynomial* polynomial, struct _node* node);
-        struct _polynomial Remove_Similar_Summands(struct _polynomial polynomial);
-	
-        void Print_Polynomial(struct _polynomial* polynomial);
+	void Neg_Polynomial(_polynomial* result, _polynomial polynomial);
+
+	void Error_Msg(const char *s);
 }
 
 %union {
 
-	struct _polynomial 	p;
-        struct _monomial        m;
-	int 		        num;
-	char 		        letter;
+	_polynomial 	p;
+	int 		num;
+	char 		letter;
 }
 
 
@@ -53,10 +41,12 @@
 %left '*' '/'
 %left NEG    
 %right '^'    
+%left '(' ')'
 
 
 %type<p> polynom
-%type<m> monom
+%type<p> monom
+%type <num> digit
 
 
 %%
@@ -64,202 +54,138 @@ input:
         | input line
 ;
 
-line:     '\n'           { printf("Enter your polynom: \n");}
-        | polynom '\n'   { printf ("\nResult: "); Print_Polynomial(&$1); }
-        | error '\n'     { yyerrok; }
+line:     '\n'
+        | polynom '\n'   { printf ("\nEnter your polynom: \n"); Print_Polynom(&$1); }
+        | error '\n'     { yyerrok;                  }
 ;
 
 polynom:
 
-          polynom '+' polynom     {printf("\nIn pol + pol\n"); $$ = Add_Polynomials($1, $3);}
-        | monom                   {printf("\nIn pynom - monom\n"); Init_Polynomial(&$$); Add_Monomial(&$$, $1);}
+			'(' polynom ')'				{$$ = $2;}
+		|		polynom '+' polynom     {printf("\nIn pol + pol\n"); Init_Polynomial(&$$); Add_Polynomials(&$$, $1, $3);}
+		|		polynom '-' polynom     {printf("\nIn pol - pol\n"); Init_Polynomial(&$$); Sub_Polynomials(&$$, $1, $3);}
+		|		polynom '*' polynom     {printf("\nIn pol - pol\n"); Init_Polynomial(&$$); Mul_Polynomials(&$$, $1, $3);}
+		|		polynom '/' polynom     {printf("\nIn pol - pol\n"); Init_Polynomial(&$$); Div_Polynomials(&$$, $1, $3);}
+		| 	'-' polynom	%prec NEG		{printf("\nIn neg pol\n"); Neg_Polynomial(&$$, $2);}
+		|		monom 					{printf("\nIn polynom - monom\n"); $$ = $1;}
+
 ;
 
 monom:  
-
-          NUM LETTER '^' NUM    { printf("\nIn NUM LETTER^NUM\n"); $$ = Create_Monomial($1, $2, $4);}
-        | NUM LETTER            { printf("\nIn NUM LETTER\n");     $$ = Create_Monomial($1, $2, 1); }
-        | LETTER '^' NUM        { printf("\nIn LETTER^NUM\n");     $$ = Create_Monomial(1, $1, $3); }
-        | LETTER                { printf("\nIn LETTER\n");         $$ = Create_Monomial(1, $1, 1);  }
-        | NUM                   { printf("\nIn NUM\n");            $$ = Create_Monomial($1, 'x', 0);}             
+			digit '*' LETTER '^' digit  { printf("\nIn NUM LETTER^NUM\n"); 	Init_Polynomial(&$$); Add_Monomial(&$$, $1, $5);}
+		|	digit LETTER '^' digit  	{ printf("\nIn NUM LETTER^NUM\n"); 	Init_Polynomial(&$$); Add_Monomial(&$$, $1, $4);}
+		|	LETTER '^' digit  			{ printf("\nIn LETTER^NUM\n"); 	  	Init_Polynomial(&$$); Add_Monomial(&$$, 1, $3);}
+		|	digit '*' LETTER 			{ printf("\nIn NUM LETTER\n"); 	   	Init_Polynomial(&$$); Add_Monomial(&$$, $1, 1);}
+        |	digit LETTER 				{ printf("\nIn NUM LETTER\n"); 	   	Init_Polynomial(&$$); Add_Monomial(&$$, $1, 1);}
+        |	LETTER          			{ printf("\nIn LETTER\n"); 			Init_Polynomial(&$$); Add_Monomial(&$$, 1, 1);}        
+        |	digit             			{ printf("\nIn NUM\n"); 			Init_Polynomial(&$$); Add_Monomial(&$$, $1, 0); }
 ;
+
+digit	:
+			
+			digit '^' digit				{ $$ = Num_Pow_Num($1, $3); }
+		|'('digit')'					{ $$ = $2;}
+		| 	NUM 						{ $$ = $1;}
+	;
+
 %%
 
 
-struct _monomial Create_Monomial(int coefficient, char letter, int power)
+
+void Mul_Polynomials(_polynomial* result, _polynomial first_p, _polynomial sec_p)
 {
-	struct _monomial result;
-	result.coefficient = coefficient;
+	for (int i = 0; i < MAX_ELEMENTS; i++)
+		result->coeff_array[i] = first_p.coeff_array[i] - sec_p.coeff_array[i]; 
+}
 
-	if ((letter == 'x' && power == 0) || coefficient == 0)
-	{
-		result.variable = 'x';
-		result.power = 0;
-		return result;
+void Div_Polynomials(_polynomial* result, _polynomial first_p, _polynomial sec_p)
+{
+	for (int i = 0; i < MAX_ELEMENTS; i++)
+		result->coeff_array[i] = first_p.coeff_array[i] - sec_p.coeff_array[i]; 
+}
+
+void Neg_Polynomial(_polynomial* result, _polynomial polynomial)
+{
+	for (int i = 0; i < MAX_ELEMENTS; i++)
+		result->coeff_array[i] = polynomial.coeff_array[i] * (-1);
+
+}
+
+void Sub_Polynomials(_polynomial* result, _polynomial first_p, _polynomial sec_p)
+{
+	for (int i = 0; i < MAX_ELEMENTS; i++)
+		result->coeff_array[i] = first_p.coeff_array[i] - sec_p.coeff_array[i]; 
+}
+
+
+void Add_Polynomials(_polynomial* result, _polynomial first_p, _polynomial sec_p)
+{
+	for (int i = 0; i < MAX_ELEMENTS; i++)
+		result->coeff_array[i] = first_p.coeff_array[i] + sec_p.coeff_array[i]; 
+}
+
+
+void Error_Msg(const char *s)
+{
+	printf("\nERROR : %s\n", s);
+	exit(-1);
+}
+
+
+int Num_Pow_Num(int a, int b)
+{
+	int result = a;
+
+	int i = 0;
+	for (i = 0; i < b - 1; i++) 
+		result = result * a;			
+	if (b == 0) 
+	{ 
+		result = 1; 
+		if(a == 0) 
+			Error_Msg("0^0 is incorrect");
 	}
-
-	result.variable = letter;
-	result.power = power;
-
 	return result;
 }
 
 
-void Init_Polynomial(struct _polynomial* polynomial)
+void Init_Polynomial(_polynomial* polynomial)
 {
-	polynomial->begin = (struct _node*)malloc(sizeof(struct _node));
-	polynomial->begin->prev = NULL;
-	polynomial->begin->next = NULL;
-	polynomial->begin->item = Create_Monomial(0,'x',0);
-	polynomial->count = 0;
+	for (int i = 0; i < MAX_ELEMENTS; i++)
+		polynomial->coeff_array[i] = 0;	
 }
 
 
-void Add_Monomial(struct _polynomial* polynomial, struct _monomial monomial)
+void Add_Monomial(_polynomial* polynomial, int coefficient, int degree)
 {
-        printf("\n current monom: %d%c^%d\n", monomial.coefficient, monomial.variable, monomial.power);
-
-	struct _node* tmp;
-
-	tmp = polynomial->begin;
-
-	if (polynomial->count == 0)
-	{
-		tmp->item = monomial;
-		polynomial->count++;
-                return;
-	}
-
-	while (tmp->next != NULL)
-	{
-		tmp = tmp->next;
-	}
-
-	tmp->next = (struct _node*)malloc(sizeof(struct _node));
-	tmp->next->prev = tmp;
-	tmp->next->next = NULL;
-	tmp = tmp->next;
-	tmp->item = monomial;
-
-	polynomial->count++;
+	polynomial->coeff_array[degree] = coefficient;
 }
 
 
-struct _node* Remove_Node(struct _polynomial* polynomial, struct _node* node)
+void Print_Polynom(_polynomial* polynomial)
 {
-	struct _node* result = node;
+	 //printf("\n");
 
-	if (polynomial->begin == node)
+	int first = 1;
+
+	for (int i = 0; i < MAX_ELEMENTS; i++)
 	{
-		if (node->next == NULL)
+		if (polynomial->coeff_array[i] != 0)
 		{
-			free(node);
-			// error!!!
-			return NULL;
-		}
-
-		node->next->prev = NULL;
-
-		result = node->next;
-		free(node);
-
-		polynomial->begin = result;
-		return result;
-	}
-
-	if (node->next == NULL)
-	{
-		node->prev->next = NULL;
-		result = node->prev;
-
-		free(node);
-		return result;
-	}
-
-	node->next->prev = node->prev;
-	node->prev->next = node->next;
-	result = node->prev;
-	free(node);
-	return result;
-}
-
-struct _polynomial Remove_Similar_Summands(struct _polynomial polynomial)
-{
-	struct _polynomial result;
-	Init_Polynomial(&result);
-	struct _monomial tmp_monom;
-	struct _node* tmp1 = polynomial.begin,
-		* tmp2;
-
-	while (tmp1 != NULL)
-	{
-		tmp_monom = tmp1->item;
-
-		tmp2 = polynomial.begin;
-
-		while (tmp2 != NULL)
-		{
-			if (
-
-				!strcmp(tmp1->item.variable, tmp2->item.variable) &&
-				tmp1->item.power == tmp2->item.power &&
-
-				tmp1 != tmp2)
-			{
-				tmp_monom.coefficient += tmp2->item.coefficient;
-				tmp2 = Remove_Node(&polynomial, tmp2);
-			}
-
-			tmp2 = tmp2->next;
-		}
-
-		tmp1 = Remove_Node(&polynomial, tmp1);
-		//tmp1 = tmp1->next;
-
-		Add_Monomial(&result, tmp_monom);
-	}
-
-	return result;
-}
-
-
-struct _polynomial Add_Polynomials(struct _polynomial polynomial_one, struct _polynomial polynomial_two)
-{
-	struct _polynomial result = polynomial_one;
-	struct _node* tmp = polynomial_two.begin;
-
-	Add_Monomial(&result, tmp->item);
-	while (tmp->next != NULL)
-	{
-		tmp = tmp->next;
-		Add_Monomial(&result, tmp->item);
-	}
-
-	return result;// = Remove_Similar_Summands(result);
-}
-
-
-
-void Print_Polynomial(struct _polynomial* polynomial)
-{
-        //printf("\n");
-        struct _node* tmp = polynomial->begin;
-
-	for (int i = 0; i < polynomial->count; i++)
-	{
-                if (tmp->item.coefficient > 0 && i != 0)
+                if (polynomial->coeff_array[i] > 0 && !first)
                         printf("+");
+				else 
+					first = 0;
 
-                if (abs(tmp->item.coefficient) > 1)
-                        printf("%d", tmp->item.coefficient);
+                if ( abs(polynomial->coeff_array[i]) > 1 || (polynomial->coeff_array[i] == 1 && i == 0) )
+                        printf("%d", polynomial->coeff_array[i]);
 
-                if (tmp->item.power != 0)
-                        printf("%c", tmp->item.variable);
+                if (i != 0)
+                    printf("%c", 'x');
 
-                if (abs(tmp->item.power) > 1)
-                        printf("^%d", tmp->item.power);
-
-                tmp = tmp->next;  
+                if (abs(i) > 1)
+                        printf("^%d", i);
+		}
 	}
         printf("\n");
 }

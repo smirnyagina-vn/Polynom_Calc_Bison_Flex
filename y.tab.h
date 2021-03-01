@@ -38,42 +38,32 @@
 #line 6 "parser.y"
 
 
-	struct _monomial
+	#define MAX_ELEMENTS 1000
+
+	typedef struct _polynomial
 	{
-		int 	coefficient;	
-		char    variable;	
-		int 	power;		
-	};
-
-        struct _node
-	{
-		struct _monomial 	item;
-		struct _node*           next;	
-		struct _node*           prev;
-	};
-
-	struct _polynomial
-	{
-		struct _node*   begin;
-		int 	        count;	
-	};
+		int coeff_array[MAX_ELEMENTS];
+		int degree;
+	}_polynomial;
 
 
-	struct _monomial Create_Monomial(int coefficient, char letter, int power);
+	void Init_Polynomial(_polynomial* polynomial);
+	void Add_Monomial(_polynomial* polynomial, int coefficient, int degree);
+	void Print_Polynom(_polynomial* polynomial);
 
-	void Init_Polynomial(struct _polynomial* polynomial);
-	void Add_Monomial(struct _polynomial* polynomial, struct _monomial monomial);
+	void Add_Polynomials(_polynomial* result, _polynomial first_p, _polynomial sec_p);
+	void Sub_Polynomials(_polynomial* result, _polynomial first_p, _polynomial sec_p);
+	void Mul_Polynomials(_polynomial* result, _polynomial first_p, _polynomial sec_p);
+	void Div_Polynomials(_polynomial* result, _polynomial first_p, _polynomial sec_p);
 
-        struct _polynomial Add_Polynomials(struct _polynomial polynomial_one, struct _polynomial polynomial_two);
-        struct _node* Remove_Node(struct _polynomial* polynomial, struct _node* node);
-        struct _polynomial Remove_Similar_Summands(struct _polynomial polynomial);
-	
-        void Print_Polynomial(struct _polynomial* polynomial);
+	void Neg_Polynomial(_polynomial* result, _polynomial polynomial);
+
+	void Error_Msg(const char *s);
 
 
 
 /* Line 1676 of yacc.c  */
-#line 77 "y.tab.h"
+#line 67 "y.tab.h"
 
 /* Tokens.  */
 #ifndef YYTOKENTYPE
@@ -99,18 +89,17 @@ typedef union YYSTYPE
 {
 
 /* Line 1676 of yacc.c  */
-#line 41 "parser.y"
+#line 31 "parser.y"
 
 
-	struct _polynomial 	p;
-        struct _monomial        m;
-	int 		        num;
-	char 		        letter;
+	_polynomial 	p;
+	int 		num;
+	char 		letter;
 
 
 
 /* Line 1676 of yacc.c  */
-#line 114 "y.tab.h"
+#line 103 "y.tab.h"
 } YYSTYPE;
 # define YYSTYPE_IS_TRIVIAL 1
 # define yystype YYSTYPE /* obsolescent; will be withdrawn */

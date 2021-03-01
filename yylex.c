@@ -12,10 +12,11 @@ int yylex (void)
   while ((c = getchar ()) == ' ' || c == '\t')
     ;
 
-  if (c == '.' || isdigit (c))
+  if (isdigit (c))
     {
+      yylval.num = 0;
       ungetc (c, stdin);
-      scanf ("%i", &yylval.num);
+      scanf ("%d", &yylval.num);
       return NUM;
     }
   else if(isalpha(c))
