@@ -103,12 +103,12 @@
 #line 9 "parser.y"
 
 
-	#define MAX_ELEMENTS 1000
+	#define MAX_ELEMENTS 1030
 
 	typedef struct _polynomial
 	{
 		int coeff_array[MAX_ELEMENTS];
-		int degree;
+		int degree; //max degree
 	}_polynomial;
 
 
@@ -125,12 +125,14 @@
 
 	void Neg_Polynomial(_polynomial* result, _polynomial polynomial);
 
+	int Is_Empty(_polynomial* polynomial);
+
 	void Error_Msg(const char *s);
 
 
 
 /* Line 209 of yacc.c  */
-#line 134 "y.tab.c"
+#line 136 "y.tab.c"
 
 /* Tokens.  */
 #ifndef YYTOKENTYPE
@@ -156,7 +158,7 @@ typedef union YYSTYPE
 {
 
 /* Line 214 of yacc.c  */
-#line 36 "parser.y"
+#line 38 "parser.y"
 
 
 	_polynomial 	p;
@@ -166,7 +168,7 @@ typedef union YYSTYPE
 
 
 /* Line 214 of yacc.c  */
-#line 170 "y.tab.c"
+#line 172 "y.tab.c"
 } YYSTYPE;
 # define YYSTYPE_IS_TRIVIAL 1
 # define yystype YYSTYPE /* obsolescent; will be withdrawn */
@@ -178,7 +180,7 @@ typedef union YYSTYPE
 
 
 /* Line 264 of yacc.c  */
-#line 182 "y.tab.c"
+#line 184 "y.tab.c"
 
 #ifdef short
 # undef short
@@ -393,16 +395,16 @@ union yyalloc
 /* YYFINAL -- State number of the termination state.  */
 #define YYFINAL  2
 /* YYLAST -- Last index in YYTABLE.  */
-#define YYLAST   54
+#define YYLAST   81
 
 /* YYNTOKENS -- Number of terminals.  */
 #define YYNTOKENS  14
 /* YYNNTS -- Number of nonterminals.  */
 #define YYNNTS  6
 /* YYNRULES -- Number of rules.  */
-#define YYNRULES  23
+#define YYNRULES  26
 /* YYNRULES -- Number of states.  */
-#define YYNSTATES  41
+#define YYNSTATES  49
 
 /* YYTRANSLATE(YYLEX) -- Bison symbol number corresponding to YYLEX.  */
 #define YYUNDEFTOK  2
@@ -449,8 +451,8 @@ static const yytype_uint8 yytranslate[] =
 static const yytype_uint8 yyprhs[] =
 {
        0,     0,     3,     4,     7,     9,    12,    15,    19,    23,
-      27,    31,    34,    38,    40,    46,    51,    55,    59,    62,
-      64,    66,    70,    74
+      27,    32,    36,    39,    43,    45,    47,    49,    52,    56,
+      60,    65,    71,    73,    77,    82,    86
 };
 
 /* YYRHS -- A `-1'-separated list of the rules' RHS.  */
@@ -458,20 +460,21 @@ static const yytype_int8 yyrhs[] =
 {
       15,     0,    -1,    -1,    15,    16,    -1,    13,    -1,    17,
       13,    -1,     1,    13,    -1,    11,    17,    12,    -1,    17,
-       6,    17,    -1,    17,     5,    17,    -1,    17,     7,    17,
-      -1,     5,    17,    -1,    17,    10,    19,    -1,    18,    -1,
-      19,     7,     3,    10,    19,    -1,    19,     3,    10,    19,
-      -1,     3,    10,    19,    -1,    19,     7,     3,    -1,    19,
-       3,    -1,     3,    -1,    19,    -1,    19,    10,    19,    -1,
-      11,    19,    12,    -1,     4,    -1
+       6,    17,    -1,    17,     5,    17,    -1,    17,    11,    17,
+      12,    -1,    17,     7,    17,    -1,     5,    17,    -1,    17,
+      10,    19,    -1,    18,    -1,    19,    -1,     3,    -1,    19,
+       3,    -1,    19,     7,     3,    -1,     3,    10,    19,    -1,
+      19,     3,    10,    19,    -1,    19,     7,     3,    10,    19,
+      -1,     4,    -1,    11,    19,    12,    -1,    19,    11,    19,
+      12,    -1,    19,     7,    19,    -1,    19,    10,    19,    -1
 };
 
 /* YYRLINE[YYN] -- source line where rule number YYN was defined.  */
 static const yytype_uint8 yyrline[] =
 {
-       0,    59,    59,    60,    63,    64,    65,    70,    71,    72,
-      73,    74,    75,    76,    81,    82,    83,    84,    85,    86,
-      87,    91,    92,    93
+       0,    61,    61,    62,    65,    66,    67,    73,    74,    75,
+      76,    77,    78,    79,    80,    85,    86,    87,    88,    89,
+      90,    91,    95,    96,    97,    98,    99
 };
 #endif
 
@@ -500,16 +503,16 @@ static const yytype_uint16 yytoknum[] =
 static const yytype_uint8 yyr1[] =
 {
        0,    14,    15,    15,    16,    16,    16,    17,    17,    17,
-      17,    17,    17,    17,    18,    18,    18,    18,    18,    18,
-      18,    19,    19,    19
+      17,    17,    17,    17,    17,    18,    18,    18,    18,    18,
+      18,    18,    19,    19,    19,    19,    19
 };
 
 /* YYR2[YYN] -- Number of symbols composing right hand side of rule YYN.  */
 static const yytype_uint8 yyr2[] =
 {
        0,     2,     0,     2,     1,     2,     2,     3,     3,     3,
-       3,     2,     3,     1,     5,     4,     3,     3,     2,     1,
-       1,     3,     3,     1
+       4,     3,     2,     3,     1,     1,     1,     2,     3,     3,
+       4,     5,     1,     3,     4,     3,     3
 };
 
 /* YYDEFACT[STATE-NAME] -- Default rule to reduce with in state
@@ -517,11 +520,11 @@ static const yytype_uint8 yyr2[] =
    means the default is an error.  */
 static const yytype_uint8 yydefact[] =
 {
-       2,     0,     1,     0,    19,    23,     0,     0,     4,     3,
-       0,    13,    20,     6,     0,    11,     0,    20,     0,     0,
-       0,     0,     5,    18,     0,     0,     0,    16,     7,    22,
-       9,     8,    10,    12,     0,    17,    21,     0,    15,     0,
-      14
+       2,     0,     1,     0,    16,    22,     0,     0,     4,     3,
+       0,    14,    15,     6,     0,    12,     0,    15,     0,     0,
+       0,     0,     0,     5,    17,     0,     0,     0,     0,    19,
+       7,    23,     9,     8,    11,    13,     0,     0,    18,    25,
+      26,     0,     0,     0,    10,    20,     0,    24,    21
 };
 
 /* YYDEFGOTO[NTERM-NUM].  */
@@ -532,20 +535,20 @@ static const yytype_int8 yydefgoto[] =
 
 /* YYPACT[STATE-NUM] -- Index in YYTABLE of the portion describing
    STATE-NUM.  */
-#define YYPACT_NINF -8
+#define YYPACT_NINF -10
 static const yytype_int8 yypact[] =
 {
-      -8,    20,    -8,    13,     2,    -8,    40,    40,    -8,    -8,
-      29,    -8,    -1,    -8,    18,    28,    42,    -2,    40,    40,
-      40,    18,    -8,    31,    25,    18,    18,    36,    -8,    -8,
-      30,    30,    28,    36,    18,    43,    36,     1,    36,    18,
-      36
+     -10,    37,   -10,    -9,    15,   -10,    -2,    -2,   -10,   -10,
+      22,   -10,    42,   -10,    40,    47,    49,     5,    -2,    -2,
+      -2,    40,    -2,   -10,    21,     2,    40,    40,    40,    55,
+     -10,   -10,    36,    36,    47,    55,    57,    40,    24,    55,
+      55,    63,    69,    40,   -10,    55,    40,   -10,    55
 };
 
 /* YYPGOTO[NTERM-NUM].  */
 static const yytype_int8 yypgoto[] =
 {
-      -8,    -8,    -8,    -3,    -8,    -7
+     -10,   -10,   -10,     4,   -10,    -7
 };
 
 /* YYTABLE[YYPACT[STATE-NUM]].  What to do in state STATE-NUM.  If
@@ -555,22 +558,28 @@ static const yytype_int8 yypgoto[] =
 #define YYTABLE_NINF -1
 static const yytype_uint8 yytable[] =
 {
-      17,    23,    23,    15,    16,    24,    24,    27,    25,    25,
-      29,    25,    14,    29,    33,    30,    31,    32,    36,    37,
-       2,     3,     5,     4,     5,     6,    13,    38,    35,    26,
-       0,     7,    40,     8,    18,    19,    20,    20,    21,    21,
-      21,    34,    22,     4,     5,     6,    25,    18,    19,    20,
-       0,     7,    21,    39,    28
+      17,     4,     5,     6,    13,    38,     5,    29,    24,     7,
+      15,    16,    25,    28,    35,    26,    27,    31,    39,    40,
+      41,    42,    32,    33,    34,    14,    36,    18,    19,    20,
+      45,    37,    21,    22,    46,    23,    39,     2,     3,    48,
+       4,     5,     6,    20,     5,    24,    21,    22,     7,    25,
+       8,    28,    26,    27,    18,    19,    20,    21,    22,    21,
+      22,    30,    18,    19,    20,    26,    27,    21,    22,    44,
+      43,     0,     0,    26,    27,    47,    43,     0,     0,    26,
+      27,    31
 };
 
 static const yytype_int8 yycheck[] =
 {
-       7,     3,     3,     6,     7,     7,     7,    14,    10,    10,
-      12,    10,    10,    12,    21,    18,    19,    20,    25,    26,
-       0,     1,     4,     3,     4,     5,    13,    34,     3,    11,
-      -1,    11,    39,    13,     5,     6,     7,     7,    10,    10,
-      10,    10,    13,     3,     4,     5,    10,     5,     6,     7,
-      -1,    11,    10,    10,    12
+       7,     3,     4,     5,    13,     3,     4,    14,     3,    11,
+       6,     7,     7,    11,    21,    10,    11,    12,    25,    26,
+      27,    28,    18,    19,    20,    10,    22,     5,     6,     7,
+      37,    10,    10,    11,    10,    13,    43,     0,     1,    46,
+       3,     4,     5,     7,     4,     3,    10,    11,    11,     7,
+      13,    11,    10,    11,     5,     6,     7,    10,    11,    10,
+      11,    12,     5,     6,     7,    10,    11,    10,    11,    12,
+       7,    -1,    -1,    10,    11,    12,     7,    -1,    -1,    10,
+      11,    12
 };
 
 /* YYSTOS[STATE-NUM] -- The (internal number of the) accessing
@@ -579,9 +588,9 @@ static const yytype_uint8 yystos[] =
 {
        0,    15,     0,     1,     3,     4,     5,    11,    13,    16,
       17,    18,    19,    13,    10,    17,    17,    19,     5,     6,
-       7,    10,    13,     3,     7,    10,    11,    19,    12,    12,
-      17,    17,    17,    19,    10,     3,    19,    19,    19,    10,
-      19
+       7,    10,    11,    13,     3,     7,    10,    11,    11,    19,
+      12,    12,    17,    17,    17,    19,    17,    10,     3,    19,
+      19,    19,    19,     7,    12,    19,    10,    12,    19
 };
 
 #define yyerrok		(yyerrstatus = 0)
@@ -1395,147 +1404,168 @@ yyreduce:
         case 4:
 
 /* Line 1455 of yacc.c  */
-#line 63 "parser.y"
+#line 65 "parser.y"
     { printf ("\nEnter your polynom: \n");}
     break;
 
   case 5:
 
 /* Line 1455 of yacc.c  */
-#line 64 "parser.y"
+#line 66 "parser.y"
     { printf("\nResult: "); Print_Polynom(&(yyvsp[(1) - (2)].p)); printf ("\nEnter your polynom: \n");}
     break;
 
   case 6:
 
 /* Line 1455 of yacc.c  */
-#line 65 "parser.y"
+#line 67 "parser.y"
     { yyerrok;            }
     break;
 
   case 7:
 
 /* Line 1455 of yacc.c  */
-#line 70 "parser.y"
-    { printf("\nIn (pol)\n"); (yyval.p) = (yyvsp[(2) - (3)].p);}
+#line 73 "parser.y"
+    { printf("\nIn (pol)\n"); (yyval.p) = (yyvsp[(2) - (3)].p);														}
     break;
 
   case 8:
 
 /* Line 1455 of yacc.c  */
-#line 71 "parser.y"
-    { printf("\nIn pol + pol\n"); Init_Polynomial(&(yyval.p)); Add_Polynomials(&(yyval.p), (yyvsp[(1) - (3)].p), (yyvsp[(3) - (3)].p));}
+#line 74 "parser.y"
+    { printf("\nIn pol + pol\n"); Init_Polynomial(&(yyval.p)); Add_Polynomials(&(yyval.p), (yyvsp[(1) - (3)].p), (yyvsp[(3) - (3)].p));		}
     break;
 
   case 9:
 
 /* Line 1455 of yacc.c  */
-#line 72 "parser.y"
-    { printf("\nIn pol - pol\n"); Init_Polynomial(&(yyval.p)); Sub_Polynomials(&(yyval.p), (yyvsp[(1) - (3)].p), (yyvsp[(3) - (3)].p));}
+#line 75 "parser.y"
+    { printf("\nIn pol - pol\n"); Init_Polynomial(&(yyval.p)); Sub_Polynomials(&(yyval.p), (yyvsp[(1) - (3)].p), (yyvsp[(3) - (3)].p));		}
     break;
 
   case 10:
 
 /* Line 1455 of yacc.c  */
-#line 73 "parser.y"
-    { printf("\nIn pol * pol\n"); Init_Polynomial(&(yyval.p)); Mul_Polynomials(&(yyval.p), (yyvsp[(1) - (3)].p), (yyvsp[(3) - (3)].p));}
+#line 76 "parser.y"
+    { printf("\nIn pol * (pol)\n"); Init_Polynomial(&(yyval.p)); Mul_Polynomials(&(yyval.p), (yyvsp[(1) - (4)].p), (yyvsp[(3) - (4)].p));		}
     break;
 
   case 11:
 
 /* Line 1455 of yacc.c  */
-#line 74 "parser.y"
-    { printf("\nIn neg pol\n");   Neg_Polynomial(&(yyval.p), (yyvsp[(2) - (2)].p));}
+#line 77 "parser.y"
+    { printf("\nIn pol * pol\n"); Init_Polynomial(&(yyval.p)); Mul_Polynomials(&(yyval.p), (yyvsp[(1) - (3)].p), (yyvsp[(3) - (3)].p));		}
     break;
 
   case 12:
 
 /* Line 1455 of yacc.c  */
-#line 75 "parser.y"
-    { printf("\nIn pol ^ digit\n"); Init_Polynomial(&(yyval.p)); Pow_Polynomial_Num(&(yyval.p), (yyvsp[(1) - (3)].p), (yyvsp[(3) - (3)].num));}
+#line 78 "parser.y"
+    { printf("\nIn neg pol\n");   Neg_Polynomial(&(yyval.p), (yyvsp[(2) - (2)].p));									}
     break;
 
   case 13:
 
 /* Line 1455 of yacc.c  */
-#line 76 "parser.y"
-    { printf("\nIn polynom - monom\n"); (yyval.p) = (yyvsp[(1) - (1)].p);}
+#line 79 "parser.y"
+    { printf("\nIn pol ^ digit\n"); Init_Polynomial(&(yyval.p)); Pow_Polynomial_Num(&(yyval.p), (yyvsp[(1) - (3)].p), (yyvsp[(3) - (3)].num));	}
     break;
 
   case 14:
 
 /* Line 1455 of yacc.c  */
-#line 81 "parser.y"
-    { printf("\nIn NUM LETTER^NUM\n"); 	Init_Polynomial(&(yyval.p)); Add_Monomial(&(yyval.p), (yyvsp[(1) - (5)].num), (yyvsp[(5) - (5)].num));}
+#line 80 "parser.y"
+    { printf("\nIn monom\n"); (yyval.p) = (yyvsp[(1) - (1)].p);														}
     break;
 
   case 15:
 
 /* Line 1455 of yacc.c  */
-#line 82 "parser.y"
-    { printf("\nIn NUM LETTER^NUM\n"); 	Init_Polynomial(&(yyval.p)); Add_Monomial(&(yyval.p), (yyvsp[(1) - (4)].num), (yyvsp[(4) - (4)].num));}
+#line 85 "parser.y"
+    { printf("\nIn NUM\n"); 			Init_Polynomial(&(yyval.p)); Add_Monomial(&(yyval.p), (yyvsp[(1) - (1)].num), 0); }
     break;
 
   case 16:
 
 /* Line 1455 of yacc.c  */
-#line 83 "parser.y"
-    { printf("\nIn LETTER^NUM\n"); 	  	Init_Polynomial(&(yyval.p)); Add_Monomial(&(yyval.p), 1, (yyvsp[(3) - (3)].num));}
+#line 86 "parser.y"
+    { printf("\nIn LETTER\n"); 			Init_Polynomial(&(yyval.p)); Add_Monomial(&(yyval.p), 1, 1);	}
     break;
 
   case 17:
 
 /* Line 1455 of yacc.c  */
-#line 84 "parser.y"
-    { printf("\nIn NUM LETTER\n"); 	   	Init_Polynomial(&(yyval.p)); Add_Monomial(&(yyval.p), (yyvsp[(1) - (3)].num), 1);}
+#line 87 "parser.y"
+    { printf("\nIn NUM LETTER\n"); 	   	Init_Polynomial(&(yyval.p)); Add_Monomial(&(yyval.p), (yyvsp[(1) - (2)].num), 1);	}
     break;
 
   case 18:
 
 /* Line 1455 of yacc.c  */
-#line 85 "parser.y"
-    { printf("\nIn NUM LETTER\n"); 	   	Init_Polynomial(&(yyval.p)); Add_Monomial(&(yyval.p), (yyvsp[(1) - (2)].num), 1);}
+#line 88 "parser.y"
+    { printf("\nIn NUM LETTER\n"); 	   	Init_Polynomial(&(yyval.p)); Add_Monomial(&(yyval.p), (yyvsp[(1) - (3)].num), 1);	}
     break;
 
   case 19:
 
 /* Line 1455 of yacc.c  */
-#line 86 "parser.y"
-    { printf("\nIn LETTER\n"); 			Init_Polynomial(&(yyval.p)); Add_Monomial(&(yyval.p), 1, 1);}
+#line 89 "parser.y"
+    { printf("\nIn LETTER^NUM\n"); 	  	Init_Polynomial(&(yyval.p)); Add_Monomial(&(yyval.p), 1, (yyvsp[(3) - (3)].num));	}
     break;
 
   case 20:
 
 /* Line 1455 of yacc.c  */
-#line 87 "parser.y"
-    { printf("\nIn NUM\n"); 			Init_Polynomial(&(yyval.p)); Add_Monomial(&(yyval.p), (yyvsp[(1) - (1)].num), 0); }
+#line 90 "parser.y"
+    { printf("\nIn NUM LETTER^NUM\n"); 	Init_Polynomial(&(yyval.p)); Add_Monomial(&(yyval.p), (yyvsp[(1) - (4)].num), (yyvsp[(4) - (4)].num)); }
     break;
 
   case 21:
 
 /* Line 1455 of yacc.c  */
 #line 91 "parser.y"
-    { (yyval.num) = Num_Pow_Num((yyvsp[(1) - (3)].num), (yyvsp[(3) - (3)].num)); }
+    { printf("\nIn NUM LETTER^NUM\n"); 	Init_Polynomial(&(yyval.p)); Add_Monomial(&(yyval.p), (yyvsp[(1) - (5)].num), (yyvsp[(5) - (5)].num)); }
     break;
 
   case 22:
 
 /* Line 1455 of yacc.c  */
-#line 92 "parser.y"
-    { (yyval.num) = (yyvsp[(2) - (3)].num);}
+#line 95 "parser.y"
+    { (yyval.num) = (yyvsp[(1) - (1)].num);}
     break;
 
   case 23:
 
 /* Line 1455 of yacc.c  */
-#line 93 "parser.y"
-    { (yyval.num) = (yyvsp[(1) - (1)].num);}
+#line 96 "parser.y"
+    { (yyval.num) = (yyvsp[(2) - (3)].num);		}
+    break;
+
+  case 24:
+
+/* Line 1455 of yacc.c  */
+#line 97 "parser.y"
+    { (yyval.num) = (yyvsp[(1) - (4)].num) * (yyvsp[(3) - (4)].num); }
+    break;
+
+  case 25:
+
+/* Line 1455 of yacc.c  */
+#line 98 "parser.y"
+    { (yyval.num) = (yyvsp[(1) - (3)].num) * (yyvsp[(3) - (3)].num); }
+    break;
+
+  case 26:
+
+/* Line 1455 of yacc.c  */
+#line 99 "parser.y"
+    { (yyval.num) = Num_Pow_Num((yyvsp[(1) - (3)].num), (yyvsp[(3) - (3)].num)); }
     break;
 
 
 
 /* Line 1455 of yacc.c  */
-#line 1539 "y.tab.c"
+#line 1569 "y.tab.c"
       default: break;
     }
   YY_SYMBOL_PRINT ("-> $$ =", yyr1[yyn], &yyval, &yyloc);
@@ -1747,7 +1777,7 @@ yyreturn:
 
 
 /* Line 1675 of yacc.c  */
-#line 96 "parser.y"
+#line 102 "parser.y"
 
 
 
@@ -1758,6 +1788,12 @@ void Pow_Polynomial_Num(_polynomial* result, _polynomial polynomial, int degree)
 	else if (degree == 0)
 	{
 		result->coeff_array[0] = 1;
+		return;
+	}
+
+	if (degree == 1)
+	{
+		memcpy(result, &polynomial, sizeof(_polynomial));
 		return;
 	}
 
@@ -1777,14 +1813,13 @@ void Pow_Polynomial_Num(_polynomial* result, _polynomial polynomial, int degree)
 	}
 }
 
-
 void Mul_Polynomials(_polynomial* result, _polynomial first_p, _polynomial sec_p)
 {
-	/*Print_Polynom(&first_p);
+	Print_Polynom(&first_p);
 	Print_Polynom(&sec_p);
 
 	printf("\nfirst mon degree: %d", first_p.degree);
-	printf("\nsec mon degree: %d", sec_p.degree);*/
+	printf("\nsec mon degree: %d", sec_p.degree);
 
 	for (int i = 0; i <= first_p.degree; i++)
 	{
@@ -1811,16 +1846,20 @@ void Mul_Polynomials(_polynomial* result, _polynomial first_p, _polynomial sec_p
 
 void Neg_Polynomial(_polynomial* result, _polynomial polynomial)
 {
-	for (int i = 0; i < MAX_ELEMENTS; i++)
+	for (int i = 0; i <= polynomial.degree; i++)
 		result->coeff_array[i] = polynomial.coeff_array[i] * (-1);
-
+	result->degree = polynomial.degree;
 }
 
 void Sub_Polynomials(_polynomial* result, _polynomial first_p, _polynomial sec_p)
 {
 	for (int i = 0; i < MAX_ELEMENTS; i++)
+	{		
 		result->coeff_array[i] = first_p.coeff_array[i] - sec_p.coeff_array[i]; 
-	result->degree = MAX(first_p.degree, sec_p.degree);
+		if (result->coeff_array[i] != 0 && result->degree < i)
+			result->degree = i;
+	}
+	//result->degree = MAX(first_p.degree, sec_p.degree);
 }
 
 
@@ -1875,30 +1914,52 @@ void Add_Monomial(_polynomial* polynomial, int coefficient, int degree)
 }
 
 
-void Print_Polynom(_polynomial* polynomial)
+int Is_Empty(_polynomial* polynomial)
 {
-	 //printf("\n");
+	int empty = 1;
 
-	int first = 1;
-
-	for (int i = 0; i < MAX_ELEMENTS; i++)
+	for (int i = 0; i <= polynomial->degree; i++)
 	{
 		if (polynomial->coeff_array[i] != 0)
 		{
-                if (polynomial->coeff_array[i] > 0 && !first)
-                        printf("+");
-				else 
-					first = 0;
-
-                if ( abs(polynomial->coeff_array[i]) > 1 || (polynomial->coeff_array[i] == 1 && i == 0) )
-                        printf("%d", polynomial->coeff_array[i]);
-
-                if (i != 0)
-                    printf("%c", 'x');
-
-                if (abs(i) > 1)
-                        printf("^%d", i);
+			empty = 0;
+			break;
 		}
 	}
-        printf("\n");
+	return empty;
+}
+
+
+void Print_Polynom(_polynomial* polynomial)
+{
+	if (Is_Empty(polynomial))
+	{
+		printf("%i\n", 0);
+		return;
+	}
+
+	int first = 1;
+
+	for (int i = 0; i <= polynomial->degree; i++)
+	{
+		if (polynomial->coeff_array[i] != 0)
+		{
+			if (polynomial->coeff_array[i] > 0 && !first)
+				printf("+");
+			else
+				first = 0;
+
+			if (polynomial->coeff_array[i] == -1 && i != 0)
+				printf("-");
+			else if (abs(polynomial->coeff_array[i]) > 1 || i == 0)
+				printf("%d", polynomial->coeff_array[i]);
+
+			if (i != 0)
+				printf("%c", 'x');
+
+			if (abs(i) > 1)
+				printf("^%d", i);
+		}
+	}
+	printf("\n");
 }

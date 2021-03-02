@@ -38,12 +38,12 @@
 #line 9 "parser.y"
 
 
-	#define MAX_ELEMENTS 1000
+	#define MAX_ELEMENTS 1030
 
 	typedef struct _polynomial
 	{
 		int coeff_array[MAX_ELEMENTS];
-		int degree;
+		int degree; //max degree
 	}_polynomial;
 
 
@@ -60,12 +60,14 @@
 
 	void Neg_Polynomial(_polynomial* result, _polynomial polynomial);
 
+	int Is_Empty(_polynomial* polynomial);
+
 	void Error_Msg(const char *s);
 
 
 
 /* Line 1676 of yacc.c  */
-#line 69 "y.tab.h"
+#line 71 "y.tab.h"
 
 /* Tokens.  */
 #ifndef YYTOKENTYPE
@@ -91,7 +93,7 @@ typedef union YYSTYPE
 {
 
 /* Line 1676 of yacc.c  */
-#line 36 "parser.y"
+#line 38 "parser.y"
 
 
 	_polynomial 	p;
@@ -101,7 +103,7 @@ typedef union YYSTYPE
 
 
 /* Line 1676 of yacc.c  */
-#line 105 "y.tab.h"
+#line 107 "y.tab.h"
 } YYSTYPE;
 # define YYSTYPE_IS_TRIVIAL 1
 # define yystype YYSTYPE /* obsolescent; will be withdrawn */
