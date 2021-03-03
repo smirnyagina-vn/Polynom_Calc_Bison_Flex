@@ -3,8 +3,9 @@
 
 int main (void)
 {
-  printf("Enter your polynom: \n");
+  printf("Enter your polynom: ");
   return yyparse ();
+  system("pause");
 }
 
 int yyerror(const char* str) {
