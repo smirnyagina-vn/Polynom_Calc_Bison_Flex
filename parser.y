@@ -3,6 +3,8 @@
 		#include <string.h>
 
 		#define MAX(a,b) ((a) > (b) ? (a) : (b))
+
+		#define DEF_LETTER '0'
 %}
 
 
@@ -13,12 +15,13 @@
 	typedef struct _polynomial
 	{
 		int coeff_array[MAX_ELEMENTS];
+		char main_letter;
 		int degree; //max degree
 	}_polynomial;
 
 
 	void Init_Polynomial(_polynomial* polynomial);
-	void Add_Monomial(_polynomial* polynomial, int coefficient, int degree);
+	void Add_Monomial(_polynomial* polynomial, int coefficient, int degree, char letter);
 	void Print_Polynom(_polynomial* polynomial);
 
 	void Add_Polynomials(_polynomial* result, _polynomial first_p, _polynomial sec_p);
@@ -69,27 +72,25 @@ line:     '\n'			{ printf ("\nEnter your polynom: ");}
 ;
 
 polynom:
-
-			'(' polynom ')'						{ /*printf("\nIn (pol)\n");*/ $$ = $2;														}
-		|		polynom '+' polynom     		{ /*printf("\nIn pol + pol\n");*/ Init_Polynomial(&$$); Add_Polynomials(&$$, $1, $3);		}
-		|		polynom '-' polynom     		{ /*printf("\nIn pol - pol\n");*/ Init_Polynomial(&$$); Sub_Polynomials(&$$, $1, $3);		}
-		|		polynom '(' polynom ')'			{ /*printf("\nIn pol * (pol)\n");*/ Init_Polynomial(&$$); Mul_Polynomials(&$$, $1, $3);		}
-		|	'('	polynom ')' polynom 			{ /*printf("\nIn pol * (pol)\n");*/ Init_Polynomial(&$$); Mul_Polynomials(&$$, $2, $4);		}
-		|		polynom '*' polynom     		{ /*printf("\nIn pol * pol\n");*/ Init_Polynomial(&$$); Mul_Polynomials(&$$, $1, $3);		}
-		| 	'-' polynom	%prec NEG				{ /*printf("\nIn neg pol\n");*/   Neg_Polynomial(&$$, $2);									}
-		|		polynom '^' power	    		{ /*printf("\nIn pol ^ digit\n");*/ Init_Polynomial(&$$); Pow_Polynomial_Num(&$$, $1, $3);	}
-		|		monom 							{ /*printf("\nIn monom\n");*/ $$ = $1;														}
-
+			'(' polynom ')'						{ printf("\nIn (pol)"); 			$$ = $2;												}
+		|		polynom '+' polynom     		{ printf("\nIn pol + pol"); 		Init_Polynomial(&$$); Add_Polynomials(&$$, $1, $3);		}
+		|		polynom '-' polynom     		{ printf("\nIn pol - pol"); 		Init_Polynomial(&$$); Sub_Polynomials(&$$, $1, $3);		}
+		|		polynom '(' polynom ')'			{ printf("\nIn pol * (pol)");	 	Init_Polynomial(&$$); Mul_Polynomials(&$$, $1, $3);		}
+		|	'('	polynom ')' polynom 			{ printf("\nIn pol * (pol)"); 		Init_Polynomial(&$$); Mul_Polynomials(&$$, $2, $4);		}
+		|		polynom '*' polynom     		{ printf("\nIn pol * pol"); 		Init_Polynomial(&$$); Mul_Polynomials(&$$, $1, $3);		}
+		| 	'-' polynom	%prec NEG				{ printf("\nIn neg pol");   		Neg_Polynomial(&$$, $2);								}
+		|		polynom '^' power	    		{ printf("\nIn pol ^ digit");	 	Init_Polynomial(&$$); Pow_Polynomial_Num(&$$, $1, $3);	}
+		|		monom 							{ printf("\nIn monom"); 			$$ = $1;												}
 ;
 
 monom:  
-        	digit             					{ /*printf("\nIn NUM\n");*/			Init_Polynomial(&$$); Add_Monomial(&$$, $1, 0); }
-        |	LETTER          					{ /*printf("\nIn LETTER\n");*/			Init_Polynomial(&$$); Add_Monomial(&$$, 1, 1);	}        
-        |	digit LETTER 						{ /*printf("\nIn NUM LETTER\n");*/ 	   	Init_Polynomial(&$$); Add_Monomial(&$$, $1, 1);	}
-		|	digit '*' LETTER 					{ /*printf("\nIn NUM LETTER\n");*/ 	   	Init_Polynomial(&$$); Add_Monomial(&$$, $1, 1);	}
-		|	LETTER '^' power  					{ /*printf("\nIn LETTER^NUM\n");*/ 	  	Init_Polynomial(&$$); Add_Monomial(&$$, 1, $3);	}
-		|	digit LETTER '^' power  			{ /*printf("\nIn NUM LETTER^NUM\n");*/ 	Init_Polynomial(&$$); Add_Monomial(&$$, $1, $4); }
-		|	digit '*' LETTER '^' power  		{ /*printf("\nIn NUM LETTER^NUM\n");*/ 	Init_Polynomial(&$$); Add_Monomial(&$$, $1, $5); }
+        	digit             					{ printf("\nIn NUM");				Init_Polynomial(&$$); Add_Monomial(&$$, $1, 0, DEF_LETTER); 		}
+        |	LETTER          					{ printf("\nIn LETTER");			Init_Polynomial(&$$); Add_Monomial(&$$, 1, 1, $1);			}        
+        |	digit LETTER 						{ printf("\nIn NUM LETTER"); 	   	Init_Polynomial(&$$); Add_Monomial(&$$, $1, 1, $2);			}
+		|	digit '*' LETTER 					{ printf("\nIn NUM LETTER"); 	   	Init_Polynomial(&$$); Add_Monomial(&$$, $1, 1, $3);			}
+		|	LETTER '^' power  					{ printf("\nIn LETTER^NUM"); 	  	Init_Polynomial(&$$); Add_Monomial(&$$, 1, $3, $1);			}
+		|	digit LETTER '^' power  			{ printf("\nIn NUM LETTER^NUM"); 	Init_Polynomial(&$$); Add_Monomial(&$$, $1, $4, $2); 		}
+		|	digit '*' LETTER '^' power  		{ printf("\nIn NUM LETTER^NUM"); 	Init_Polynomial(&$$); Add_Monomial(&$$, $1, $5, $3); 		}
 ;
 
 digit	:
@@ -143,13 +144,23 @@ void Pow_Polynomial_Num(_polynomial* result, _polynomial polynomial, int degree)
 		//printf("\nin iteration res:\n");
 		//Print_Polynom(result);
 	}
+
+	result->main_letter = polynomial.main_letter;
 }
 
 void Mul_Polynomials(_polynomial* result, _polynomial first_p, _polynomial sec_p)
 {
+	if (first_p.main_letter != sec_p.main_letter && first_p.main_letter != DEF_LETTER && sec_p.main_letter != DEF_LETTER )
+	{
+		Error_Msg("Different letters in polynomials");
+		return;
+	}
+
+	result->main_letter = MAX(first_p.main_letter, sec_p.main_letter);
+
 	/*Print_Polynom(&first_p);
 	Print_Polynom(&sec_p);
-
+	
 	printf("\nfirst mon degree: %d", first_p.degree);
 	printf("\nsec mon degree: %d", sec_p.degree);*/
 
@@ -181,25 +192,39 @@ void Neg_Polynomial(_polynomial* result, _polynomial polynomial)
 	for (int i = 0; i <= polynomial.degree; i++)
 		result->coeff_array[i] = polynomial.coeff_array[i] * (-1);
 	result->degree = polynomial.degree;
+	result->main_letter = polynomial.main_letter;
 }
 
 void Sub_Polynomials(_polynomial* result, _polynomial first_p, _polynomial sec_p)
 {
+	if (first_p.main_letter != sec_p.main_letter && first_p.main_letter != DEF_LETTER && sec_p.main_letter != DEF_LETTER )
+	{
+		Error_Msg("Different letters in polynomials");
+		return;
+	}
+
 	for (int i = 0; i < MAX_ELEMENTS; i++)
 	{		
 		result->coeff_array[i] = first_p.coeff_array[i] - sec_p.coeff_array[i]; 
 		if (result->coeff_array[i] != 0 && result->degree < i)
 			result->degree = i;
 	}
-	//result->degree = MAX(first_p.degree, sec_p.degree);
+	
+	result->main_letter = MAX(first_p.main_letter, sec_p.main_letter);
 }
-
 
 void Add_Polynomials(_polynomial* result, _polynomial first_p, _polynomial sec_p)
 {
+	if (first_p.main_letter != sec_p.main_letter && first_p.main_letter != DEF_LETTER && sec_p.main_letter != DEF_LETTER )
+	{
+		Error_Msg("Different letters in polynomials");
+		return;
+	}
+
 	for (int i = 0; i < MAX_ELEMENTS; i++)
 		result->coeff_array[i] = first_p.coeff_array[i] + sec_p.coeff_array[i];
 	result->degree = MAX(first_p.degree, sec_p.degree);
+	result->main_letter = MAX(first_p.main_letter, sec_p.main_letter);
 
 	//printf("\nResult of add: ");
 	//Print_Polynom(result); 
@@ -209,7 +234,8 @@ void Add_Polynomials(_polynomial* result, _polynomial first_p, _polynomial sec_p
 void Error_Msg(const char *s)
 {
 	printf("\nERROR : %s\n", s);
-	exit(-1);
+	//system("pause");
+	//exit(-1);
 }
 
 
@@ -233,16 +259,24 @@ int Num_Pow_Num(int a, int b)
 void Init_Polynomial(_polynomial* polynomial)
 {
 	polynomial->degree = 0;
+	polynomial->main_letter = DEF_LETTER;
 	for (int i = 0; i < MAX_ELEMENTS; i++)
 		polynomial->coeff_array[i] = 0;	
 }
 
 
-void Add_Monomial(_polynomial* polynomial, int coefficient, int degree)
+void Add_Monomial(_polynomial* polynomial, int coefficient, int degree, char letter)
 {
-	polynomial->coeff_array[degree] = coefficient;
-	if (polynomial->degree < degree)
-		polynomial->degree = degree;
+	if (polynomial->main_letter == DEF_LETTER || polynomial->main_letter == letter)
+	{
+		if (letter != DEF_LETTER) 
+			polynomial->main_letter = letter;
+		polynomial->coeff_array[degree] = coefficient;
+		if (polynomial->degree < degree)
+			polynomial->degree = degree;
+	}
+	else
+		Error_Msg("another letter in polynom");
 }
 
 
@@ -287,7 +321,7 @@ void Print_Polynom(_polynomial* polynomial)
 				printf("%d", polynomial->coeff_array[i]);
 
 			if (i != 0)
-				printf("%c", 'x');
+				printf("%c", polynomial->main_letter);
 
 			if (abs(i) > 1)
 				printf("^%d", i);

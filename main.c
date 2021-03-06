@@ -9,6 +9,6 @@ int main (void)
 }
 
 int yyerror(const char* str) {
-	fprintf(stderr, "error: %s\n", str);
+	fprintf(stderr, "\nerror: %s\n", str);
 	return 0;
 }
