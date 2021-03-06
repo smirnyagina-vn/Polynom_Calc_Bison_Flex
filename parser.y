@@ -5,6 +5,7 @@
 		#define MAX(a,b) ((a) > (b) ? (a) : (b))
 
 		#define DEF_LETTER '0'
+
 %}
 
 
@@ -66,8 +67,8 @@ input:
         | input line
 ;
 
-line:     '\n'			{ printf ("\nEnter your polynom: ");}
-        | polynom '\n'  { printf("\nResult: "); Print_Polynom(&$1); printf ("\nEnter your polynom: ");}
+line:     '\n'			{ /*printf ("\nEnter your polynom: ");*/}
+        | polynom '\n'  { printf("\nResult: "); Print_Polynom(&$1); /*printf ("\nEnter your polynom: ");*/}
         | error '\n'    { yyerrok;            }
 ;
 
@@ -102,6 +103,7 @@ digit	:
 
 power:
 		 	NUM 								{ $$ = $1;}
+		| 	LETTER								{Error_Msg("no letters in degree");}
 		| '('power')'							{ $$ = $2;		}
 		|	power '+' power     				{ $$ = $1 + $3; }
 		|	power '-' power     				{ $$ = $1 - $3; }
@@ -112,6 +114,7 @@ power:
 	;
 
 %%
+
 
 
 void Pow_Polynomial_Num(_polynomial* result, _polynomial polynomial, int degree)

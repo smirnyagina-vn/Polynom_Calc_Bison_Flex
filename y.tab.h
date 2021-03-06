@@ -35,7 +35,7 @@
 /* "%code requires" blocks.  */
 
 /* Line 1676 of yacc.c  */
-#line 9 "parser.y"
+#line 12 "parser.y"
 
 
 	#define MAX_ELEMENTS 1030
@@ -43,12 +43,13 @@
 	typedef struct _polynomial
 	{
 		int coeff_array[MAX_ELEMENTS];
+		char main_letter;
 		int degree; //max degree
 	}_polynomial;
 
 
 	void Init_Polynomial(_polynomial* polynomial);
-	void Add_Monomial(_polynomial* polynomial, int coefficient, int degree);
+	void Add_Monomial(_polynomial* polynomial, int coefficient, int degree, char letter);
 	void Print_Polynom(_polynomial* polynomial);
 
 	void Add_Polynomials(_polynomial* result, _polynomial first_p, _polynomial sec_p);
@@ -67,7 +68,7 @@
 
 
 /* Line 1676 of yacc.c  */
-#line 71 "y.tab.h"
+#line 72 "y.tab.h"
 
 /* Tokens.  */
 #ifndef YYTOKENTYPE
@@ -93,7 +94,7 @@ typedef union YYSTYPE
 {
 
 /* Line 1676 of yacc.c  */
-#line 38 "parser.y"
+#line 42 "parser.y"
 
 
 	_polynomial 	p;
@@ -103,7 +104,7 @@ typedef union YYSTYPE
 
 
 /* Line 1676 of yacc.c  */
-#line 107 "y.tab.h"
+#line 108 "y.tab.h"
 } YYSTYPE;
 # define YYSTYPE_IS_TRIVIAL 1
 # define yystype YYSTYPE /* obsolescent; will be withdrawn */
