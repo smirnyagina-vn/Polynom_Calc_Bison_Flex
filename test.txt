@@ -1,10 +1,13 @@
--(x+1)^2
-(72x^6+12x^3+4x^2+x-123)*(12x^2-7)^2+4x^4-2x^3-7
-2+3*5
-p^2*(2p^2+11p-1)*(3p+1)-4p*(p+6)+12p*(3p^2-6p+1)+8
-(x^6+x^5*2+x^4*4+x^3*8+x^2*16+x*32+64)*(x-2)
-5x^2
-(5x)^2
+$first = x
 
-((x+1)^2)^2
-((2x))-x-x
+$sec = $first * x^4
+print $first
+print $sec
+print 555
+
+$third = 333333
+$fourth = ($first * $third) + $first * $sec - $first - x + 5x^6*$first
+print $first
+print $sec
+print $third
+print $fourth

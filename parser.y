@@ -11,7 +11,11 @@
 
 %code requires {
 
-	#define MAX_ELEMENTS 1030
+	#define MAX_ELEMENTS 1024
+	#define MAX_VAR_ELEM 20
+	#define MAX_VAR_NAME_LEN 128
+
+	struct _variable * g_list_variables = NULL;
 
 	typedef struct _polynomial
 	{
@@ -20,6 +24,13 @@
 		int degree; //max degree
 	}_polynomial;
 
+	typedef struct _variable
+	{
+		char				* variable;
+		struct _variable	* next;
+		struct _variable	* prev;
+		struct _polynomial	  polynomial;
+	}_variable;
 
 	void Init_Polynomial(_polynomial* polynomial);
 	void Add_Monomial(_polynomial* polynomial, int coefficient, int degree, char letter);
@@ -37,18 +48,24 @@
 	int Is_Empty(_polynomial* polynomial);
 
 	void Error_Msg(const char *s);
+
+	void Insert_Variable_In_Global_List(char *letter, struct _polynomial polynomial);
+	struct _polynomial Search_Variable_In_Global_List(char *variable);
+
 }
 
 %union {
 
-	_polynomial 	p;
-	int 		num;
 	char 		letter;
+	int 		num;
+	char 		str[MAX_VAR_NAME_LEN];
+	_polynomial p;
 }
 
-
+%token<str> PRINT VAR_NAME
 %token<letter> LETTER
 %token<num> NUM
+
 %left '-' '+'
 %left '*' '/'
 %left NEG    
@@ -56,6 +73,7 @@
 %left '(' ')'
 
 
+%type<str> variable
 %type<p> polynom
 %type<p> monom
 %type <num> digit
@@ -67,9 +85,21 @@ input:
         | input line
 ;
 
-line:     '\n'			{ /*printf ("\nEnter your polynom: ");*/}
-        | polynom '\n'  { printf("\nResult: "); Print_Polynom(&$1); /*printf ("\nEnter your polynom: ");*/}
-        | error '\n'    { yyerrok;            }
+line:     '\n'							{ /*printf ("\nEnter your polynom: ");*/}
+        | variable '=' polynom '\n'		{ Insert_Variable_In_Global_List($1, $3); printf("\nIn line - var"); }
+        | PRINT variable '\n'
+			{
+				struct _polynomial tmp;
+				printf("\nVariable \"%s\" ", $2);
+				tmp = Search_Variable_In_Global_List($2);
+				Print_Polynom(&tmp);
+			}
+		| PRINT polynom '\n'
+			{
+				printf("\nResult: ");
+				Print_Polynom(&$2);
+			}
+		//| error '\n'    { yyerrok;            }
 ;
 
 polynom:
@@ -82,16 +112,17 @@ polynom:
 		| 	'-' polynom	%prec NEG				{ printf("\nIn neg pol");   		Neg_Polynomial(&$$, $2);								}
 		|		polynom '^' power	    		{ printf("\nIn pol ^ digit");	 	Init_Polynomial(&$$); Pow_Polynomial_Num(&$$, $1, $3);	}
 		|		monom 							{ printf("\nIn monom"); 			$$ = $1;												}
+		|		variable 						{ 									$$ = Search_Variable_In_Global_List($1);				}
 ;
 
 monom:  
-        	digit             					{ printf("\nIn NUM");				Init_Polynomial(&$$); Add_Monomial(&$$, $1, 0, DEF_LETTER); 		}
-        |	LETTER          					{ printf("\nIn LETTER");			Init_Polynomial(&$$); Add_Monomial(&$$, 1, 1, $1);			}        
-        |	digit LETTER 						{ printf("\nIn NUM LETTER"); 	   	Init_Polynomial(&$$); Add_Monomial(&$$, $1, 1, $2);			}
-		|	digit '*' LETTER 					{ printf("\nIn NUM LETTER"); 	   	Init_Polynomial(&$$); Add_Monomial(&$$, $1, 1, $3);			}
-		|	LETTER '^' power  					{ printf("\nIn LETTER^NUM"); 	  	Init_Polynomial(&$$); Add_Monomial(&$$, 1, $3, $1);			}
-		|	digit LETTER '^' power  			{ printf("\nIn NUM LETTER^NUM"); 	Init_Polynomial(&$$); Add_Monomial(&$$, $1, $4, $2); 		}
-		|	digit '*' LETTER '^' power  		{ printf("\nIn NUM LETTER^NUM"); 	Init_Polynomial(&$$); Add_Monomial(&$$, $1, $5, $3); 		}
+        	digit             					{ printf("\nIn NUM");				Init_Polynomial(&$$); Add_Monomial(&$$, $1, 0, DEF_LETTER); 	}
+        |	LETTER          					{ printf("\nIn LETTER");			Init_Polynomial(&$$); Add_Monomial(&$$,  1,  1, $1);			}        
+        |	digit LETTER 						{ printf("\nIn NUM LETTER"); 	   	Init_Polynomial(&$$); Add_Monomial(&$$, $1,  1, $2);			}
+		|	digit '*' LETTER 					{ printf("\nIn NUM LETTER"); 	   	Init_Polynomial(&$$); Add_Monomial(&$$, $1,  1, $3);			}
+		|	LETTER '^' power  					{ printf("\nIn LETTER^NUM"); 	  	Init_Polynomial(&$$); Add_Monomial(&$$,  1, $3, $1);			}
+		|	digit LETTER '^' power  			{ printf("\nIn NUM LETTER^NUM"); 	Init_Polynomial(&$$); Add_Monomial(&$$, $1, $4, $2); 			}
+		|	digit '*' LETTER '^' power  		{ printf("\nIn NUM LETTER^NUM"); 	Init_Polynomial(&$$); Add_Monomial(&$$, $1, $5, $3);	 		}
 ;
 
 digit	:
@@ -103,7 +134,7 @@ digit	:
 
 power:
 		 	NUM 								{ $$ = $1;}
-		| 	LETTER								{Error_Msg("no letters in degree");}
+		| 	LETTER								{ Error_Msg("no letters in degree"); }
 		| '('power')'							{ $$ = $2;		}
 		|	power '+' power     				{ $$ = $1 + $3; }
 		|	power '-' power     				{ $$ = $1 - $3; }
@@ -113,9 +144,86 @@ power:
 		|	power '^' power						{ $$ = Num_Pow_Num($1, $3); }
 	;
 
+variable:
+			'$' VAR_NAME 
+			{ 
+				strncpy($$, $2, strlen($2)); 
+				$$[strlen($2)] = '\0';
+				printf("\n In var. Got var name: %s", $$);
+			}
+	;
+
 %%
 
 
+void Insert_Variable_In_Global_List(char *letter, struct _polynomial polynomial)
+{
+	printf("\nIn Insert_Variable_In_Global_List, name: %s; polynom: ", letter);
+	Print_Polynom(&polynomial);
+
+	struct _variable *tmp = g_list_variables;
+	struct _variable *tmp_variable = (struct _variable *)malloc(sizeof(struct _variable));
+
+	//tmp_variable->variable = letter;
+	tmp_variable->variable = (char*)malloc(sizeof(char) * (strlen(letter) + 1));
+	strncpy(tmp_variable->variable, letter, strlen(letter));
+	tmp_variable->variable[strlen(letter)] = '\0';
+	tmp_variable->polynomial = polynomial;
+	tmp_variable->next = NULL;
+	tmp_variable->prev = NULL;
+
+	printf("Tmp`s fields:\nName: %s; \nPolynom: ", tmp_variable->variable);
+	Print_Polynom(&tmp_variable->polynomial);
+
+	if (g_list_variables == NULL)
+	{
+		g_list_variables = tmp_variable;
+		return;
+	}
+	
+	while (tmp->next != NULL)
+	{
+		if (!strcmp(tmp->variable, letter))
+		{
+			tmp->polynomial = polynomial;
+			return;
+		}
+		tmp = tmp->next;
+	}
+
+	if (!strcmp(tmp->variable, letter))
+	{
+		tmp->polynomial = polynomial;
+		return;
+	}
+
+	tmp_variable->prev = tmp;
+	tmp->next = tmp_variable;
+}
+
+struct _polynomial Search_Variable_In_Global_List(char *variable)
+{
+	printf("\nIn Search_Variable_In_Global_List, name: %s", variable);
+
+	struct _variable * tmp = g_list_variables;
+	struct _polynomial result;
+
+	while (tmp != NULL)
+	{
+		if (!strcmp(tmp->variable, variable))
+		{
+			result = tmp->polynomial;
+			printf("\nFound poly: ");
+			Print_Polynom(&result);
+			return result;
+		}
+		tmp = tmp->next;
+	}
+	// Lexical error
+	Error_Msg("not initialize variable");
+	Init_Polynomial(&result);
+	return result;
+}
 
 void Pow_Polynomial_Num(_polynomial* result, _polynomial polynomial, int degree)
 {

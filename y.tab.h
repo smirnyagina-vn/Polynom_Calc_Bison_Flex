@@ -38,7 +38,11 @@
 #line 12 "parser.y"
 
 
-	#define MAX_ELEMENTS 1030
+	#define MAX_ELEMENTS 1024
+	#define MAX_VAR_ELEM 20
+	#define MAX_VAR_NAME_LEN 128
+
+	struct _variable * g_list_variables = NULL;
 
 	typedef struct _polynomial
 	{
@@ -47,6 +51,13 @@
 		int degree; //max degree
 	}_polynomial;
 
+	typedef struct _variable
+	{
+		char				* variable;
+		struct _variable	* next;
+		struct _variable	* prev;
+		struct _polynomial	  polynomial;
+	}_variable;
 
 	void Init_Polynomial(_polynomial* polynomial);
 	void Add_Monomial(_polynomial* polynomial, int coefficient, int degree, char letter);
@@ -65,10 +76,14 @@
 
 	void Error_Msg(const char *s);
 
+	void Insert_Variable_In_Global_List(char *letter, struct _polynomial polynomial);
+	struct _polynomial Search_Variable_In_Global_List(char *variable);
+
+
 
 
 /* Line 1676 of yacc.c  */
-#line 72 "y.tab.h"
+#line 87 "y.tab.h"
 
 /* Tokens.  */
 #ifndef YYTOKENTYPE
@@ -76,15 +91,19 @@
    /* Put the tokens into the symbol table, so that GDB and other debuggers
       know about them.  */
    enum yytokentype {
-     LETTER = 258,
-     NUM = 259,
-     NEG = 260
+     PRINT = 258,
+     VAR_NAME = 259,
+     LETTER = 260,
+     NUM = 261,
+     NEG = 262
    };
 #endif
 /* Tokens.  */
-#define LETTER 258
-#define NUM 259
-#define NEG 260
+#define PRINT 258
+#define VAR_NAME 259
+#define LETTER 260
+#define NUM 261
+#define NEG 262
 
 
 
@@ -94,17 +113,18 @@ typedef union YYSTYPE
 {
 
 /* Line 1676 of yacc.c  */
-#line 42 "parser.y"
+#line 57 "parser.y"
 
 
-	_polynomial 	p;
-	int 		num;
 	char 		letter;
+	int 		num;
+	char 		str[MAX_VAR_NAME_LEN];
+	_polynomial p;
 
 
 
 /* Line 1676 of yacc.c  */
-#line 108 "y.tab.h"
+#line 128 "y.tab.h"
 } YYSTYPE;
 # define YYSTYPE_IS_TRIVIAL 1
 # define yystype YYSTYPE /* obsolescent; will be withdrawn */
