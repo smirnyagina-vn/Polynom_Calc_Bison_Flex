@@ -5,7 +5,6 @@
 		#define MAX(a,b) ((a) > (b) ? (a) : (b))
 
 		#define DEF_LETTER '0'
-
 %}
 
 
@@ -47,10 +46,10 @@
 
 	int Is_Empty(_polynomial* polynomial);
 
-	void Error_Msg(const char *s);
-
 	void Insert_Variable_In_Global_List(char *letter, struct _polynomial polynomial);
 	struct _polynomial Search_Variable_In_Global_List(char *variable);
+
+	void Error_Msg(const char *s, int from_bison);
 
 }
 
@@ -62,12 +61,12 @@
 	_polynomial p;
 }
 
-%token<str> PRINT VAR_NAME
+%token<str> CMD_PRINT VAR_NAME
 %token<letter> LETTER
 %token<num> NUM
 
 %left '-' '+'
-%left '*' '/'
+%left '*'
 %left NEG    
 %right '^'    
 %left '(' ')'
@@ -85,21 +84,21 @@ input:
         | input line
 ;
 
-line:     '\n'							{ /*printf ("\nEnter your polynom: ");*/}
+line:   
+		  '\n'							{ /*printf ("\nEnter your polynom: ");*/}
         | variable '=' polynom '\n'		{ Insert_Variable_In_Global_List($1, $3); printf("\nIn line - var"); }
-        | PRINT variable '\n'
+        | CMD_PRINT variable '\n'
 			{
 				struct _polynomial tmp;
 				printf("\nVariable \"%s\" ", $2);
 				tmp = Search_Variable_In_Global_List($2);
 				Print_Polynom(&tmp);
 			}
-		| PRINT polynom '\n'
+		| CMD_PRINT polynom '\n'
 			{
 				printf("\nResult: ");
 				Print_Polynom(&$2);
 			}
-		//| error '\n'    { yyerrok;            }
 ;
 
 polynom:
@@ -113,6 +112,12 @@ polynom:
 		|		polynom '^' power	    		{ printf("\nIn pol ^ digit");	 	Init_Polynomial(&$$); Pow_Polynomial_Num(&$$, $1, $3);	}
 		|		monom 							{ printf("\nIn monom"); 			$$ = $1;												}
 		|		variable 						{ 									$$ = Search_Variable_In_Global_List($1);				}
+		|
+			'+' polynom							{ Error_Msg("incorrect '+ polynomial'", 1); 			}
+		|	'*' polynom							{ Error_Msg("incorrect '* polynomial'", 1); 			}
+		|	polynom '+' '+'						{ Error_Msg("incorrect +", 1); 						}
+		|	polynom '^' '^' 					{ Error_Msg("incorrect ^", 1); 						}
+		|	polynom '^' '-'						{ Error_Msg("incorrect ^-", 1); 						}
 ;
 
 monom:  
@@ -134,7 +139,7 @@ digit	:
 
 power:
 		 	NUM 								{ $$ = $1;}
-		| 	LETTER								{ Error_Msg("no letters in degree"); }
+		| 	LETTER								{ Error_Msg("no letters in degree", 1); }
 		| '('power')'							{ $$ = $2;		}
 		|	power '+' power     				{ $$ = $1 + $3; }
 		|	power '-' power     				{ $$ = $1 - $3; }
@@ -220,7 +225,7 @@ struct _polynomial Search_Variable_In_Global_List(char *variable)
 		tmp = tmp->next;
 	}
 	// Lexical error
-	Error_Msg("not initialize variable");
+	Error_Msg("not initialize variable", 1);
 	Init_Polynomial(&result);
 	return result;
 }
@@ -228,7 +233,7 @@ struct _polynomial Search_Variable_In_Global_List(char *variable)
 void Pow_Polynomial_Num(_polynomial* result, _polynomial polynomial, int degree)
 {
 	if (degree == 0 && polynomial.degree == 0)
-		Error_Msg("0^0 is incorrect");
+		Error_Msg("0^0 is incorrect", 1);
 	else if (degree == 0)
 	{
 		result->coeff_array[0] = 1;
@@ -263,7 +268,7 @@ void Mul_Polynomials(_polynomial* result, _polynomial first_p, _polynomial sec_p
 {
 	if (first_p.main_letter != sec_p.main_letter && first_p.main_letter != DEF_LETTER && sec_p.main_letter != DEF_LETTER )
 	{
-		Error_Msg("Different letters in polynomials");
+		Error_Msg("Different letters in polynomials", 1);
 		return;
 	}
 
@@ -288,7 +293,7 @@ void Mul_Polynomials(_polynomial* result, _polynomial first_p, _polynomial sec_p
 			}
 			else
 			{
-				Error_Msg("\nMaximum degree reached\n");
+				Error_Msg("\nMaximum degree reached\n", 1);
 				break;
 			}
 		}
@@ -310,7 +315,7 @@ void Sub_Polynomials(_polynomial* result, _polynomial first_p, _polynomial sec_p
 {
 	if (first_p.main_letter != sec_p.main_letter && first_p.main_letter != DEF_LETTER && sec_p.main_letter != DEF_LETTER )
 	{
-		Error_Msg("Different letters in polynomials");
+		Error_Msg("Different letters in polynomials", 1);
 		return;
 	}
 
@@ -328,7 +333,7 @@ void Add_Polynomials(_polynomial* result, _polynomial first_p, _polynomial sec_p
 {
 	if (first_p.main_letter != sec_p.main_letter && first_p.main_letter != DEF_LETTER && sec_p.main_letter != DEF_LETTER )
 	{
-		Error_Msg("Different letters in polynomials");
+		Error_Msg("Different letters in polynomials", 1);
 		return;
 	}
 
@@ -339,14 +344,6 @@ void Add_Polynomials(_polynomial* result, _polynomial first_p, _polynomial sec_p
 
 	//printf("\nResult of add: ");
 	//Print_Polynom(result); 
-}
-
-
-void Error_Msg(const char *s)
-{
-	printf("\nERROR : %s\n", s);
-	//system("pause");
-	//exit(-1);
 }
 
 
@@ -361,7 +358,7 @@ int Num_Pow_Num(int a, int b)
 	{ 
 		result = 1; 
 		if(a == 0) 
-			Error_Msg("0^0 is incorrect");
+			Error_Msg("0^0 is incorrect", 1);
 	}
 	return result;
 }
@@ -387,7 +384,7 @@ void Add_Monomial(_polynomial* polynomial, int coefficient, int degree, char let
 			polynomial->degree = degree;
 	}
 	else
-		Error_Msg("another letter in polynom");
+		Error_Msg("another letter in polynom", 1);
 }
 
 

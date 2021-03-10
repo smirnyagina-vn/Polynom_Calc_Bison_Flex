@@ -35,7 +35,7 @@
 /* "%code requires" blocks.  */
 
 /* Line 1676 of yacc.c  */
-#line 12 "parser.y"
+#line 11 "parser.y"
 
 
 	#define MAX_ELEMENTS 1024
@@ -74,10 +74,10 @@
 
 	int Is_Empty(_polynomial* polynomial);
 
-	void Error_Msg(const char *s);
-
 	void Insert_Variable_In_Global_List(char *letter, struct _polynomial polynomial);
 	struct _polynomial Search_Variable_In_Global_List(char *variable);
+
+	void Error_Msg(const char *s, int from_bison);
 
 
 
@@ -91,7 +91,7 @@
    /* Put the tokens into the symbol table, so that GDB and other debuggers
       know about them.  */
    enum yytokentype {
-     PRINT = 258,
+     CMD_PRINT = 258,
      VAR_NAME = 259,
      LETTER = 260,
      NUM = 261,
@@ -99,7 +99,7 @@
    };
 #endif
 /* Tokens.  */
-#define PRINT 258
+#define CMD_PRINT 258
 #define VAR_NAME 259
 #define LETTER 260
 #define NUM 261
@@ -113,7 +113,7 @@ typedef union YYSTYPE
 {
 
 /* Line 1676 of yacc.c  */
-#line 57 "parser.y"
+#line 56 "parser.y"
 
 
 	char 		letter;
