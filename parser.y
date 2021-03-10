@@ -86,11 +86,11 @@ input:
 
 line:   
 		  '\n'							{ /*printf ("\nEnter your polynom: ");*/}
-        | variable '=' polynom '\n'		{ Insert_Variable_In_Global_List($1, $3); printf("\nIn line - var"); }
+        | variable '=' polynom '\n'		{ Insert_Variable_In_Global_List($1, $3); /*printf("\nIn line - var");*/ }
         | CMD_PRINT variable '\n'
 			{
 				struct _polynomial tmp;
-				printf("\nVariable \"%s\" ", $2);
+				printf("\nVariable \"%s\": ", $2);
 				tmp = Search_Variable_In_Global_List($2);
 				Print_Polynom(&tmp);
 			}
@@ -102,51 +102,51 @@ line:
 ;
 
 polynom:
-			'(' polynom ')'						{ printf("\nIn (pol)"); 			$$ = $2;												}
-		|		polynom '+' polynom     		{ printf("\nIn pol + pol"); 		Init_Polynomial(&$$); Add_Polynomials(&$$, $1, $3);		}
-		|		polynom '-' polynom     		{ printf("\nIn pol - pol"); 		Init_Polynomial(&$$); Sub_Polynomials(&$$, $1, $3);		}
-		|		polynom '(' polynom ')'			{ printf("\nIn pol * (pol)");	 	Init_Polynomial(&$$); Mul_Polynomials(&$$, $1, $3);		}
-		|	'('	polynom ')' polynom 			{ printf("\nIn pol * (pol)"); 		Init_Polynomial(&$$); Mul_Polynomials(&$$, $2, $4);		}
-		|		polynom '*' polynom     		{ printf("\nIn pol * pol"); 		Init_Polynomial(&$$); Mul_Polynomials(&$$, $1, $3);		}
-		| 	'-' polynom	%prec NEG				{ printf("\nIn neg pol");   		Neg_Polynomial(&$$, $2);								}
-		|		polynom '^' power	    		{ printf("\nIn pol ^ digit");	 	Init_Polynomial(&$$); Pow_Polynomial_Num(&$$, $1, $3);	}
-		|		monom 							{ printf("\nIn monom"); 			$$ = $1;												}
-		|		variable 						{ 									$$ = Search_Variable_In_Global_List($1);				}
+			'(' polynom ')'						{ /*printf("\nIn (pol)");*/ 			$$ = $2;												}
+		|		polynom '+' polynom     		{ /*printf("\nIn pol + pol");*/ 		Init_Polynomial(&$$); Add_Polynomials(&$$, $1, $3);		}
+		|		polynom '-' polynom     		{ /*printf("\nIn pol - pol");*/ 		Init_Polynomial(&$$); Sub_Polynomials(&$$, $1, $3);		}
+		|		polynom '(' polynom ')'			{ /*printf("\nIn pol * (pol)");*/	 	Init_Polynomial(&$$); Mul_Polynomials(&$$, $1, $3);		}
+		|	'('	polynom ')' polynom 			{ /*printf("\nIn pol * (pol)");*/ 		Init_Polynomial(&$$); Mul_Polynomials(&$$, $2, $4);		}
+		|		polynom '*' polynom     		{ /*printf("\nIn pol * pol");*/ 		Init_Polynomial(&$$); Mul_Polynomials(&$$, $1, $3);		}
+		| 	'-' polynom	%prec NEG				{ /*printf("\nIn neg pol");*/   		Neg_Polynomial(&$$, $2);								}
+		|		polynom '^' power	    		{ /*printf("\nIn pol ^ digit");*/	 	Init_Polynomial(&$$); Pow_Polynomial_Num(&$$, $1, $3);	}
+		|		monom 							{ /*printf("\nIn monom"); */			$$ = $1;												}
+		|		variable 						{ 										$$ = Search_Variable_In_Global_List($1);				}
 		|
 			'+' polynom							{ Error_Msg("incorrect '+ polynomial'", 1); 			}
 		|	'*' polynom							{ Error_Msg("incorrect '* polynomial'", 1); 			}
-		|	polynom '+' '+'						{ Error_Msg("incorrect +", 1); 						}
-		|	polynom '^' '^' 					{ Error_Msg("incorrect ^", 1); 						}
+		|	polynom '+' '+'						{ Error_Msg("incorrect +", 1); 							}
+		|	polynom '^' '^' 					{ Error_Msg("incorrect ^", 1); 							}
 		|	polynom '^' '-'						{ Error_Msg("incorrect ^-", 1); 						}
 ;
 
 monom:  
-        	digit             					{ printf("\nIn NUM");				Init_Polynomial(&$$); Add_Monomial(&$$, $1, 0, DEF_LETTER); 	}
-        |	LETTER          					{ printf("\nIn LETTER");			Init_Polynomial(&$$); Add_Monomial(&$$,  1,  1, $1);			}        
-        |	digit LETTER 						{ printf("\nIn NUM LETTER"); 	   	Init_Polynomial(&$$); Add_Monomial(&$$, $1,  1, $2);			}
-		|	digit '*' LETTER 					{ printf("\nIn NUM LETTER"); 	   	Init_Polynomial(&$$); Add_Monomial(&$$, $1,  1, $3);			}
-		|	LETTER '^' power  					{ printf("\nIn LETTER^NUM"); 	  	Init_Polynomial(&$$); Add_Monomial(&$$,  1, $3, $1);			}
-		|	digit LETTER '^' power  			{ printf("\nIn NUM LETTER^NUM"); 	Init_Polynomial(&$$); Add_Monomial(&$$, $1, $4, $2); 			}
-		|	digit '*' LETTER '^' power  		{ printf("\nIn NUM LETTER^NUM"); 	Init_Polynomial(&$$); Add_Monomial(&$$, $1, $5, $3);	 		}
+        	digit             					{ /*printf("\nIn NUM");*/				Init_Polynomial(&$$); Add_Monomial(&$$, $1, 0, DEF_LETTER); 	}
+        |	LETTER          					{ /*printf("\nIn LETTER");*/			Init_Polynomial(&$$); Add_Monomial(&$$,  1,  1, $1);			}        
+        |	digit LETTER 						{ /*printf("\nIn NUM LETTER");*/ 	   	Init_Polynomial(&$$); Add_Monomial(&$$, $1,  1, $2);			}
+		|	digit '*' LETTER 					{ /*printf("\nIn NUM LETTER");*/ 	   	Init_Polynomial(&$$); Add_Monomial(&$$, $1,  1, $3);			}
+		|	LETTER '^' power  					{ /*printf("\nIn LETTER^NUM");*/ 	  	Init_Polynomial(&$$); Add_Monomial(&$$,  1, $3, $1);			}
+		|	digit LETTER '^' power  			{ /*printf("\nIn NUM LETTER^NUM");*/	Init_Polynomial(&$$); Add_Monomial(&$$, $1, $4, $2); 			}
+		|	digit '*' LETTER '^' power  		{ /*printf("\nIn NUM LETTER^NUM");*/ 	Init_Polynomial(&$$); Add_Monomial(&$$, $1, $5, $3);	 		}
 ;
 
 digit	:
-		 	NUM 								{ $$ = $1;}
-		| '('digit')'							{ $$ = $2;		}
-		|	digit '*' digit     				{ $$ = $1 * $3; }
+		 	NUM 								{ $$ = $1;					}
+		| '('digit')'							{ $$ = $2;					}
+		|	digit '*' digit     				{ $$ = $1 * $3; 			}
 		|	digit '^' digit						{ $$ = Num_Pow_Num($1, $3); }
 	;
 
 power:
-		 	NUM 								{ $$ = $1;}
+		 	NUM 								{ $$ = $1;								}
 		| 	LETTER								{ Error_Msg("no letters in degree", 1); }
-		| '('power')'							{ $$ = $2;		}
-		|	power '+' power     				{ $$ = $1 + $3; }
-		|	power '-' power     				{ $$ = $1 - $3; }
-		|	power '(' power ')'    				{ $$ = $1 * $3; }
-		| '('power ')' power     				{ $$ = $2 * $4; }
-		|	power '*' power     				{ $$ = $1 * $3; }
-		|	power '^' power						{ $$ = Num_Pow_Num($1, $3); }
+		| '('power')'							{ $$ = $2;								}
+		|	power '+' power     				{ $$ = $1 + $3; 						}
+		|	power '-' power     				{ $$ = $1 - $3; 						}
+		|	power '(' power ')'    				{ $$ = $1 * $3; 						}
+		| '('power ')' power     				{ $$ = $2 * $4; 						}
+		|	power '*' power     				{ $$ = $1 * $3; 						}
+		|	power '^' power						{ $$ = Num_Pow_Num($1, $3); 			}
 	;
 
 variable:
@@ -154,7 +154,7 @@ variable:
 			{ 
 				strncpy($$, $2, strlen($2)); 
 				$$[strlen($2)] = '\0';
-				printf("\n In var. Got var name: %s", $$);
+				//printf("\n In var. Got var name: %s", $$);
 			}
 	;
 
@@ -163,8 +163,8 @@ variable:
 
 void Insert_Variable_In_Global_List(char *letter, struct _polynomial polynomial)
 {
-	printf("\nIn Insert_Variable_In_Global_List, name: %s; polynom: ", letter);
-	Print_Polynom(&polynomial);
+	//printf("\nIn Insert_Variable_In_Global_List, name: %s; polynom: ", letter);
+	//Print_Polynom(&polynomial);
 
 	struct _variable *tmp = g_list_variables;
 	struct _variable *tmp_variable = (struct _variable *)malloc(sizeof(struct _variable));
@@ -177,8 +177,8 @@ void Insert_Variable_In_Global_List(char *letter, struct _polynomial polynomial)
 	tmp_variable->next = NULL;
 	tmp_variable->prev = NULL;
 
-	printf("Tmp`s fields:\nName: %s; \nPolynom: ", tmp_variable->variable);
-	Print_Polynom(&tmp_variable->polynomial);
+	//printf("Tmp`s fields:\nName: %s; \nPolynom: ", tmp_variable->variable);
+	//Print_Polynom(&tmp_variable->polynomial);
 
 	if (g_list_variables == NULL)
 	{
@@ -208,7 +208,7 @@ void Insert_Variable_In_Global_List(char *letter, struct _polynomial polynomial)
 
 struct _polynomial Search_Variable_In_Global_List(char *variable)
 {
-	printf("\nIn Search_Variable_In_Global_List, name: %s", variable);
+	//printf("\nIn Search_Variable_In_Global_List, name: %s", variable);
 
 	struct _variable * tmp = g_list_variables;
 	struct _polynomial result;
@@ -218,8 +218,8 @@ struct _polynomial Search_Variable_In_Global_List(char *variable)
 		if (!strcmp(tmp->variable, variable))
 		{
 			result = tmp->polynomial;
-			printf("\nFound poly: ");
-			Print_Polynom(&result);
+			//printf("\nFound poly: ");
+			//Print_Polynom(&result);
 			return result;
 		}
 		tmp = tmp->next;

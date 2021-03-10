@@ -1472,7 +1472,7 @@ yyreduce:
 
 /* Line 1455 of yacc.c  */
 #line 89 "parser.y"
-    { Insert_Variable_In_Global_List((yyvsp[(1) - (4)].str), (yyvsp[(3) - (4)].p)); printf("\nIn line - var"); }
+    { Insert_Variable_In_Global_List((yyvsp[(1) - (4)].str), (yyvsp[(3) - (4)].p)); /*printf("\nIn line - var");*/ }
     break;
 
   case 6:
@@ -1481,7 +1481,7 @@ yyreduce:
 #line 91 "parser.y"
     {
 				struct _polynomial tmp;
-				printf("\nVariable \"%s\" ", (yyvsp[(2) - (3)].str));
+				printf("\nVariable \"%s\": ", (yyvsp[(2) - (3)].str));
 				tmp = Search_Variable_In_Global_List((yyvsp[(2) - (3)].str));
 				Print_Polynom(&tmp);
 			}
@@ -1501,70 +1501,70 @@ yyreduce:
 
 /* Line 1455 of yacc.c  */
 #line 105 "parser.y"
-    { printf("\nIn (pol)"); 			(yyval.p) = (yyvsp[(2) - (3)].p);												}
+    { /*printf("\nIn (pol)");*/ 			(yyval.p) = (yyvsp[(2) - (3)].p);												}
     break;
 
   case 9:
 
 /* Line 1455 of yacc.c  */
 #line 106 "parser.y"
-    { printf("\nIn pol + pol"); 		Init_Polynomial(&(yyval.p)); Add_Polynomials(&(yyval.p), (yyvsp[(1) - (3)].p), (yyvsp[(3) - (3)].p));		}
+    { /*printf("\nIn pol + pol");*/ 		Init_Polynomial(&(yyval.p)); Add_Polynomials(&(yyval.p), (yyvsp[(1) - (3)].p), (yyvsp[(3) - (3)].p));		}
     break;
 
   case 10:
 
 /* Line 1455 of yacc.c  */
 #line 107 "parser.y"
-    { printf("\nIn pol - pol"); 		Init_Polynomial(&(yyval.p)); Sub_Polynomials(&(yyval.p), (yyvsp[(1) - (3)].p), (yyvsp[(3) - (3)].p));		}
+    { /*printf("\nIn pol - pol");*/ 		Init_Polynomial(&(yyval.p)); Sub_Polynomials(&(yyval.p), (yyvsp[(1) - (3)].p), (yyvsp[(3) - (3)].p));		}
     break;
 
   case 11:
 
 /* Line 1455 of yacc.c  */
 #line 108 "parser.y"
-    { printf("\nIn pol * (pol)");	 	Init_Polynomial(&(yyval.p)); Mul_Polynomials(&(yyval.p), (yyvsp[(1) - (4)].p), (yyvsp[(3) - (4)].p));		}
+    { /*printf("\nIn pol * (pol)");*/	 	Init_Polynomial(&(yyval.p)); Mul_Polynomials(&(yyval.p), (yyvsp[(1) - (4)].p), (yyvsp[(3) - (4)].p));		}
     break;
 
   case 12:
 
 /* Line 1455 of yacc.c  */
 #line 109 "parser.y"
-    { printf("\nIn pol * (pol)"); 		Init_Polynomial(&(yyval.p)); Mul_Polynomials(&(yyval.p), (yyvsp[(2) - (4)].p), (yyvsp[(4) - (4)].p));		}
+    { /*printf("\nIn pol * (pol)");*/ 		Init_Polynomial(&(yyval.p)); Mul_Polynomials(&(yyval.p), (yyvsp[(2) - (4)].p), (yyvsp[(4) - (4)].p));		}
     break;
 
   case 13:
 
 /* Line 1455 of yacc.c  */
 #line 110 "parser.y"
-    { printf("\nIn pol * pol"); 		Init_Polynomial(&(yyval.p)); Mul_Polynomials(&(yyval.p), (yyvsp[(1) - (3)].p), (yyvsp[(3) - (3)].p));		}
+    { /*printf("\nIn pol * pol");*/ 		Init_Polynomial(&(yyval.p)); Mul_Polynomials(&(yyval.p), (yyvsp[(1) - (3)].p), (yyvsp[(3) - (3)].p));		}
     break;
 
   case 14:
 
 /* Line 1455 of yacc.c  */
 #line 111 "parser.y"
-    { printf("\nIn neg pol");   		Neg_Polynomial(&(yyval.p), (yyvsp[(2) - (2)].p));								}
+    { /*printf("\nIn neg pol");*/   		Neg_Polynomial(&(yyval.p), (yyvsp[(2) - (2)].p));								}
     break;
 
   case 15:
 
 /* Line 1455 of yacc.c  */
 #line 112 "parser.y"
-    { printf("\nIn pol ^ digit");	 	Init_Polynomial(&(yyval.p)); Pow_Polynomial_Num(&(yyval.p), (yyvsp[(1) - (3)].p), (yyvsp[(3) - (3)].num));	}
+    { /*printf("\nIn pol ^ digit");*/	 	Init_Polynomial(&(yyval.p)); Pow_Polynomial_Num(&(yyval.p), (yyvsp[(1) - (3)].p), (yyvsp[(3) - (3)].num));	}
     break;
 
   case 16:
 
 /* Line 1455 of yacc.c  */
 #line 113 "parser.y"
-    { printf("\nIn monom"); 			(yyval.p) = (yyvsp[(1) - (1)].p);												}
+    { /*printf("\nIn monom"); */			(yyval.p) = (yyvsp[(1) - (1)].p);												}
     break;
 
   case 17:
 
 /* Line 1455 of yacc.c  */
 #line 114 "parser.y"
-    { 									(yyval.p) = Search_Variable_In_Global_List((yyvsp[(1) - (1)].str));				}
+    { 										(yyval.p) = Search_Variable_In_Global_List((yyvsp[(1) - (1)].str));				}
     break;
 
   case 18:
@@ -1585,14 +1585,14 @@ yyreduce:
 
 /* Line 1455 of yacc.c  */
 #line 118 "parser.y"
-    { Error_Msg("incorrect +", 1); 						}
+    { Error_Msg("incorrect +", 1); 							}
     break;
 
   case 21:
 
 /* Line 1455 of yacc.c  */
 #line 119 "parser.y"
-    { Error_Msg("incorrect ^", 1); 						}
+    { Error_Msg("incorrect ^", 1); 							}
     break;
 
   case 22:
@@ -1606,70 +1606,70 @@ yyreduce:
 
 /* Line 1455 of yacc.c  */
 #line 124 "parser.y"
-    { printf("\nIn NUM");				Init_Polynomial(&(yyval.p)); Add_Monomial(&(yyval.p), (yyvsp[(1) - (1)].num), 0, DEF_LETTER); 	}
+    { /*printf("\nIn NUM");*/				Init_Polynomial(&(yyval.p)); Add_Monomial(&(yyval.p), (yyvsp[(1) - (1)].num), 0, DEF_LETTER); 	}
     break;
 
   case 24:
 
 /* Line 1455 of yacc.c  */
 #line 125 "parser.y"
-    { printf("\nIn LETTER");			Init_Polynomial(&(yyval.p)); Add_Monomial(&(yyval.p),  1,  1, (yyvsp[(1) - (1)].letter));			}
+    { /*printf("\nIn LETTER");*/			Init_Polynomial(&(yyval.p)); Add_Monomial(&(yyval.p),  1,  1, (yyvsp[(1) - (1)].letter));			}
     break;
 
   case 25:
 
 /* Line 1455 of yacc.c  */
 #line 126 "parser.y"
-    { printf("\nIn NUM LETTER"); 	   	Init_Polynomial(&(yyval.p)); Add_Monomial(&(yyval.p), (yyvsp[(1) - (2)].num),  1, (yyvsp[(2) - (2)].letter));			}
+    { /*printf("\nIn NUM LETTER");*/ 	   	Init_Polynomial(&(yyval.p)); Add_Monomial(&(yyval.p), (yyvsp[(1) - (2)].num),  1, (yyvsp[(2) - (2)].letter));			}
     break;
 
   case 26:
 
 /* Line 1455 of yacc.c  */
 #line 127 "parser.y"
-    { printf("\nIn NUM LETTER"); 	   	Init_Polynomial(&(yyval.p)); Add_Monomial(&(yyval.p), (yyvsp[(1) - (3)].num),  1, (yyvsp[(3) - (3)].letter));			}
+    { /*printf("\nIn NUM LETTER");*/ 	   	Init_Polynomial(&(yyval.p)); Add_Monomial(&(yyval.p), (yyvsp[(1) - (3)].num),  1, (yyvsp[(3) - (3)].letter));			}
     break;
 
   case 27:
 
 /* Line 1455 of yacc.c  */
 #line 128 "parser.y"
-    { printf("\nIn LETTER^NUM"); 	  	Init_Polynomial(&(yyval.p)); Add_Monomial(&(yyval.p),  1, (yyvsp[(3) - (3)].num), (yyvsp[(1) - (3)].letter));			}
+    { /*printf("\nIn LETTER^NUM");*/ 	  	Init_Polynomial(&(yyval.p)); Add_Monomial(&(yyval.p),  1, (yyvsp[(3) - (3)].num), (yyvsp[(1) - (3)].letter));			}
     break;
 
   case 28:
 
 /* Line 1455 of yacc.c  */
 #line 129 "parser.y"
-    { printf("\nIn NUM LETTER^NUM"); 	Init_Polynomial(&(yyval.p)); Add_Monomial(&(yyval.p), (yyvsp[(1) - (4)].num), (yyvsp[(4) - (4)].num), (yyvsp[(2) - (4)].letter)); 			}
+    { /*printf("\nIn NUM LETTER^NUM");*/	Init_Polynomial(&(yyval.p)); Add_Monomial(&(yyval.p), (yyvsp[(1) - (4)].num), (yyvsp[(4) - (4)].num), (yyvsp[(2) - (4)].letter)); 			}
     break;
 
   case 29:
 
 /* Line 1455 of yacc.c  */
 #line 130 "parser.y"
-    { printf("\nIn NUM LETTER^NUM"); 	Init_Polynomial(&(yyval.p)); Add_Monomial(&(yyval.p), (yyvsp[(1) - (5)].num), (yyvsp[(5) - (5)].num), (yyvsp[(3) - (5)].letter));	 		}
+    { /*printf("\nIn NUM LETTER^NUM");*/ 	Init_Polynomial(&(yyval.p)); Add_Monomial(&(yyval.p), (yyvsp[(1) - (5)].num), (yyvsp[(5) - (5)].num), (yyvsp[(3) - (5)].letter));	 		}
     break;
 
   case 30:
 
 /* Line 1455 of yacc.c  */
 #line 134 "parser.y"
-    { (yyval.num) = (yyvsp[(1) - (1)].num);}
+    { (yyval.num) = (yyvsp[(1) - (1)].num);					}
     break;
 
   case 31:
 
 /* Line 1455 of yacc.c  */
 #line 135 "parser.y"
-    { (yyval.num) = (yyvsp[(2) - (3)].num);		}
+    { (yyval.num) = (yyvsp[(2) - (3)].num);					}
     break;
 
   case 32:
 
 /* Line 1455 of yacc.c  */
 #line 136 "parser.y"
-    { (yyval.num) = (yyvsp[(1) - (3)].num) * (yyvsp[(3) - (3)].num); }
+    { (yyval.num) = (yyvsp[(1) - (3)].num) * (yyvsp[(3) - (3)].num); 			}
     break;
 
   case 33:
@@ -1683,7 +1683,7 @@ yyreduce:
 
 /* Line 1455 of yacc.c  */
 #line 141 "parser.y"
-    { (yyval.num) = (yyvsp[(1) - (1)].num);}
+    { (yyval.num) = (yyvsp[(1) - (1)].num);								}
     break;
 
   case 35:
@@ -1697,49 +1697,49 @@ yyreduce:
 
 /* Line 1455 of yacc.c  */
 #line 143 "parser.y"
-    { (yyval.num) = (yyvsp[(2) - (3)].num);		}
+    { (yyval.num) = (yyvsp[(2) - (3)].num);								}
     break;
 
   case 37:
 
 /* Line 1455 of yacc.c  */
 #line 144 "parser.y"
-    { (yyval.num) = (yyvsp[(1) - (3)].num) + (yyvsp[(3) - (3)].num); }
+    { (yyval.num) = (yyvsp[(1) - (3)].num) + (yyvsp[(3) - (3)].num); 						}
     break;
 
   case 38:
 
 /* Line 1455 of yacc.c  */
 #line 145 "parser.y"
-    { (yyval.num) = (yyvsp[(1) - (3)].num) - (yyvsp[(3) - (3)].num); }
+    { (yyval.num) = (yyvsp[(1) - (3)].num) - (yyvsp[(3) - (3)].num); 						}
     break;
 
   case 39:
 
 /* Line 1455 of yacc.c  */
 #line 146 "parser.y"
-    { (yyval.num) = (yyvsp[(1) - (4)].num) * (yyvsp[(3) - (4)].num); }
+    { (yyval.num) = (yyvsp[(1) - (4)].num) * (yyvsp[(3) - (4)].num); 						}
     break;
 
   case 40:
 
 /* Line 1455 of yacc.c  */
 #line 147 "parser.y"
-    { (yyval.num) = (yyvsp[(2) - (4)].num) * (yyvsp[(4) - (4)].num); }
+    { (yyval.num) = (yyvsp[(2) - (4)].num) * (yyvsp[(4) - (4)].num); 						}
     break;
 
   case 41:
 
 /* Line 1455 of yacc.c  */
 #line 148 "parser.y"
-    { (yyval.num) = (yyvsp[(1) - (3)].num) * (yyvsp[(3) - (3)].num); }
+    { (yyval.num) = (yyvsp[(1) - (3)].num) * (yyvsp[(3) - (3)].num); 						}
     break;
 
   case 42:
 
 /* Line 1455 of yacc.c  */
 #line 149 "parser.y"
-    { (yyval.num) = Num_Pow_Num((yyvsp[(1) - (3)].num), (yyvsp[(3) - (3)].num)); }
+    { (yyval.num) = Num_Pow_Num((yyvsp[(1) - (3)].num), (yyvsp[(3) - (3)].num)); 			}
     break;
 
   case 43:
@@ -1749,7 +1749,7 @@ yyreduce:
     { 
 				strncpy((yyval.str), (yyvsp[(2) - (2)].str), strlen((yyvsp[(2) - (2)].str))); 
 				(yyval.str)[strlen((yyvsp[(2) - (2)].str))] = '\0';
-				printf("\n In var. Got var name: %s", (yyval.str));
+				//printf("\n In var. Got var name: %s", $$);
 			}
     break;
 
@@ -1974,8 +1974,8 @@ yyreturn:
 
 void Insert_Variable_In_Global_List(char *letter, struct _polynomial polynomial)
 {
-	printf("\nIn Insert_Variable_In_Global_List, name: %s; polynom: ", letter);
-	Print_Polynom(&polynomial);
+	//printf("\nIn Insert_Variable_In_Global_List, name: %s; polynom: ", letter);
+	//Print_Polynom(&polynomial);
 
 	struct _variable *tmp = g_list_variables;
 	struct _variable *tmp_variable = (struct _variable *)malloc(sizeof(struct _variable));
@@ -1988,8 +1988,8 @@ void Insert_Variable_In_Global_List(char *letter, struct _polynomial polynomial)
 	tmp_variable->next = NULL;
 	tmp_variable->prev = NULL;
 
-	printf("Tmp`s fields:\nName: %s; \nPolynom: ", tmp_variable->variable);
-	Print_Polynom(&tmp_variable->polynomial);
+	//printf("Tmp`s fields:\nName: %s; \nPolynom: ", tmp_variable->variable);
+	//Print_Polynom(&tmp_variable->polynomial);
 
 	if (g_list_variables == NULL)
 	{
@@ -2019,7 +2019,7 @@ void Insert_Variable_In_Global_List(char *letter, struct _polynomial polynomial)
 
 struct _polynomial Search_Variable_In_Global_List(char *variable)
 {
-	printf("\nIn Search_Variable_In_Global_List, name: %s", variable);
+	//printf("\nIn Search_Variable_In_Global_List, name: %s", variable);
 
 	struct _variable * tmp = g_list_variables;
 	struct _polynomial result;
@@ -2029,8 +2029,8 @@ struct _polynomial Search_Variable_In_Global_List(char *variable)
 		if (!strcmp(tmp->variable, variable))
 		{
 			result = tmp->polynomial;
-			printf("\nFound poly: ");
-			Print_Polynom(&result);
+			//printf("\nFound poly: ");
+			//Print_Polynom(&result);
 			return result;
 		}
 		tmp = tmp->next;
