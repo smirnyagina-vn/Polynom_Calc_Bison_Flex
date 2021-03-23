@@ -55,61 +55,74 @@ int yylex (void)
 		//c = fgetc(yyin);
 	}
 
-	if (isdigit (cur_symb))
+
+	if (cur_symb == '$')
 	{
+		cur_symb = fgetc(yyin);
+		//printf("\n Cur alpha: %c", cur_symb);
+		if (isalpha(cur_symb))
+		{
+			int  i = 0;
+			int  length = 1;
+			char *buf = (char*)malloc(sizeof(char)*(length + 1));
+			buf[0] = cur_symb;
+
+			cur_symb = fgetc(yyin);//next symbol
+
+			while (isalpha(cur_symb) && length < MAX_VAR_NAME_LEN)
+			{
+				//printf("\n Scan next var alpha: %c", cur_symb);
+				length++;
+				buf = (char*)realloc(buf, length + 1);
+				buf[length - 1] = cur_symb;
+				cur_symb = fgetc(yyin);
+			}
+
+			buf[length] = '\0';
+			
+			if (!isalpha(cur_symb))
+				ungetc (cur_symb, yyin);
+
+			//printf("\n Got var name: %s. Str len: %zi", buf, strlen(buf));
+			strcpy(yylval.str, (const char*)buf);
+			return VAR_NAME;
+		}
+		else{
+			Error_Msg("only letetrs in var name", 0);
+		}
+		
+	}
+	else if (isdigit (cur_symb))
+	{
+		//printf("\n Cur num: %c", cur_symb);
 		yylval.num = 0;
 		ungetc (cur_symb, yyin);
 		tmp_scanf ("%d", &yylval.num);
 		//printf("\n Scan NUM");
 		return NUM;
 	}
-	else if(isalpha(cur_symb))
+	else if(cur_symb == '<')
 	{
-		/*ungetc (c, yyin);
-		tmp_scanf ("%c", &yylval.letter);
-		return LETTER;*/
-		//printf("\n Scan alpha: %c. Begin of cycle", cur_symb);
-		int  i = 0;
-		int  length = 1;
-		char *buf = (char*)malloc(sizeof(char)*(length + 1));
-		buf[0] = cur_symb;
-
+		//printf("\n Cur alpha: %c", cur_symb);
 		cur_symb = fgetc(yyin);//next symbol
 
-		while (isalpha(cur_symb))
-		{
-			//printf("\n Scan next alpha: %c", cur_symb);
-			length++;
-			buf = (char*)realloc(buf, length + 1);
-			buf[length - 1] = cur_symb;
-			cur_symb = fgetc(yyin);
-		}
-
-		buf[length] = '\0';
-		
-		if (!isalpha(cur_symb))
-			ungetc (cur_symb, yyin);
-
-		if (length == 1)
-		{
-			//printf("\n Got only one alpha");
-			yylval.letter = buf[0];
-			return LETTER;
-		}
-		else if (!strcmp("print", buf))
+		if (cur_symb == '<')
 		{
 			//printf("\n Got print comand");
 			return CMD_PRINT;
 		}
 		else
-		{
-			//printf("\n Got str: %s. Str len: %zi", buf, strlen(buf));
-			strcpy(yylval.str, (const char*)buf);
-			return VAR_NAME;
-		}
+			Error_Msg("unknowm command", 0);
 
 	}
+	else if (isalpha(cur_symb))
+	{
+		//printf("\n Cur alpha: %c", cur_symb);
+		yylval.letter = cur_symb;
+		return LETTER;
+	}
 	else{
+		//printf("\n Cur alpha in switch case: %c", cur_symb);
 
 		switch (cur_symb)
 		{
@@ -127,8 +140,8 @@ int yylex (void)
 				return cur_symb;
 			case '=':
 				return cur_symb;
-			case '$':
-				return cur_symb;
+			//case '$':
+			//	return cur_symb;
 			case '\n':
 			{
 				line_counter++;
@@ -137,6 +150,7 @@ int yylex (void)
 			case EOF:
 				return 0;
 			default:
+			//printf("\nIncorrect symbol: %c", cur_symb);
 			Error_Msg("incorrect symbol", 0);
 		}
 
@@ -151,17 +165,15 @@ int yyerror(const char* str) {
 	
 	if (cur_symb == EOF || cur_symb == '\n')
 		printf("\nERROR in line %d: maybe forgot '\\n' in end file\n", line_counter + 1, cur_symb);
-	else if (cur_symb == '+' || cur_symb == '-' || cur_symb == '=' || cur_symb == '^' || cur_symb == '*')
-		printf("\nERROR in line %d: incorrect operator '%c'\n", line_counter + 1, cur_symb);
 	else
 		printf("\nERROR in line %d: '%s' on token ...\n", line_counter + 1, str);	
 	return 0;
 }
 
 
-void Error_Msg(const char *s, int from_bison)
+void Error_Msg(const char *s, int no_inc)
 {
-	if (from_bison)
+	if (no_inc)
 		printf("\nERROR in line %d: %s\n", line_counter, s);
 	else
 		printf("\nERROR in line %d: %s\n", line_counter + 1, s);

@@ -1,13 +1,3 @@
-$first = x
-
-$sec = $first * x^4
-print $first
-print $sec
-print 555
-
-$third = 333333
-$fourth = ($first * $third) + $first * $sec - $first - x + 5x^6*$first
-print $first
-print $sec
-print $third
-print $fourth
+$A = 5xxx
+<< $A
+<< $bb
